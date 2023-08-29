@@ -17,7 +17,8 @@
     "fluent-ffmpeg": "^2.1.2",
     "socket.io": "^4.7.2",
     "uuid": "^9.0.0",
-    "ytdl-core": "^4.11.5"
+    "ytdl-core": "^4.11.5",
+    "ytpl": "^2.3.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",

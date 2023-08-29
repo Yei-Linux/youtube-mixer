@@ -3,6 +3,13 @@ import internal from 'node:stream';
 import fs from 'fs';
 import { filterByExtension } from './data';
 import { TGetStream } from '../types/conversion';
+import ytpl from 'ytpl';
+
+export const getYtPlaylist = async (ytPlaylistId: string) => {
+  const playlist = await ytpl(ytPlaylistId);
+  if (!playlist) throw new Error('Invalid ytPlaylist Id');
+  return playlist;
+};
 
 export const getYtInfo = async (ytUrl: string) => {
   const response = await ytdl.getInfo(ytUrl);

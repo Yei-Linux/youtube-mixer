@@ -9,7 +9,7 @@ export const Download = () => {
   return (
     <div className="flex flex-col gap-7">
       <div>
-        <label htmlFor="countries" className="block mb-2 text-sm font-medium">
+        <label htmlFor="extensions" className="block mb-2 text-sm font-medium">
           Extension:
         </label>
         <Select

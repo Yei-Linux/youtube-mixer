@@ -20,6 +20,10 @@ export const Manager = () => {
               bodyContent: <Download />,
             },
             {
+              headerContent: <h3 className="text-md">Mix Playlist</h3>,
+              bodyContent: <Download />,
+            },
+            {
               headerContent: <h3 className="text-md">Create Summary</h3>,
               bodyContent: <Download />,
             },

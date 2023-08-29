@@ -7,13 +7,21 @@ export type TInputChangeEvent = ({
 export interface IInput {
   id?: string;
   placeholder: string;
-  value: string;
+  value?: string;
   onChange?: TInputChangeEvent;
+  name?: string;
 }
 
-export const Input: FC<IInput> = ({ id, placeholder, value, onChange }) => (
+export const Input: FC<IInput> = ({
+  name,
+  id,
+  placeholder,
+  value,
+  onChange,
+}) => (
   <input
     type="text"
+    name={name}
     value={value}
     onChange={onChange}
     className="border outline-0 text-gray border-gray-300 text-gray-500 text-sm rounded-lg block w-full p-2.5"
