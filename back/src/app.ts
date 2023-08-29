@@ -4,6 +4,7 @@ import cors from 'cors';
 import { ytDownloader } from './controllers/youtube-downloader';
 import bodyParser from 'body-parser';
 import { ytSearch } from './controllers/youtube-search';
+import { getYTMixPlaylist } from './controllers/youtube-mix-playlist';
 
 const app: Application = express();
 const server = http.createServer(app);
@@ -21,6 +22,7 @@ const sockets: any = {};
 
 app.post('/api/youtube-download', ytDownloader);
 app.get('/api/youtube-search', ytSearch);
+app.get('/api/youtube-mix-playlist', getYTMixPlaylist);
 
 io.on('connection', (socket: any) => {
   console.log('Client Connected: ', socket?.id);

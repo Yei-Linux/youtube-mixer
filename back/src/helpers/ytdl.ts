@@ -4,11 +4,28 @@ import fs from 'fs';
 import { filterByExtension } from './data';
 import { TGetStream } from '../types/conversion';
 import ytpl from 'ytpl';
+import Miniget from 'miniget';
 
 export const getYtPlaylist = async (ytPlaylistId: string) => {
-  const playlist = await ytpl(ytPlaylistId);
-  if (!playlist) throw new Error('Invalid ytPlaylist Id');
-  return playlist;
+  try {
+    const playlist = await ytpl(ytPlaylistId);
+    if (!playlist) throw new Error('Invalid ytPlaylist Id');
+    return playlist;
+  } catch (error) {
+    throw new Error((error as any).message);
+  }
+};
+
+export const getYtMixList = async (baseVideoId: string, listId: string) => {
+  try {
+    const url = `https://www.youtube.com/watch?${new URLSearchParams({
+      v: baseVideoId,
+      list: listId,
+    })}`;
+    const response = await Miniget(url, {}).text();
+    console.log('test', url);
+    console.log('test', response);
+  } catch (error) {}
 };
 
 export const getYtInfo = async (ytUrl: string) => {

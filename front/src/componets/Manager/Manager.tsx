@@ -4,6 +4,7 @@ import { Tabs } from '../ui/Tabs';
 import { Download } from './components/Download/Download';
 import { useYtVideoStore } from '../../store';
 import { Empty } from './components/Empty/Empty';
+import { Playlist } from './components/Playlist/Playlist';
 
 export const Manager = () => {
   const metaInfo = useYtVideoStore((state) => state.metaInfo);
@@ -21,7 +22,7 @@ export const Manager = () => {
             },
             {
               headerContent: <h3 className="text-md">Mix Playlist</h3>,
-              bodyContent: <Download />,
+              bodyContent: <Playlist />,
             },
             {
               headerContent: <h3 className="text-md">Create Summary</h3>,
