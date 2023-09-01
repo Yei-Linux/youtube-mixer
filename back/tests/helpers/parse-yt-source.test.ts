@@ -1,10 +1,16 @@
 import 'mocha';
 import { parseYTSourceText } from '../../src/helpers/parse';
-
-const mock_case1 = `My text: var data ={ "screen": 123 ,"playlist":{"title": "My mix", "content": [{"title": "Video1"},{"title": "Video2"}]}}`;
+import { mock_parse_yt_source_case1 } from '../../src/mocks/parse-yt-source.mock';
 
 describe('Parsing youtube content', () => {
   it('When is got a large string from youtube', () => {
-    parseYTSourceText(mock_case1);
+    const parsed = parseYTSourceText(mock_parse_yt_source_case1, [
+      'var ytInitialData=',
+      'var ytInitialData =',
+      'window["ytInitialData"]=',
+      'window["ytInitialData"] =',
+    ]);
+
+    console.log('test', parsed);
   });
 });
