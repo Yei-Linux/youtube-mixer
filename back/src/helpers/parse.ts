@@ -1,3 +1,8 @@
+const charValidators: any = {
+  '{': ['{', '}'],
+  '[': ['[', ']'],
+};
+
 /**
  * @summary Parse text string and convert it to json finding ytInitialData
  * @summary Filter by '"playlist":{"title": "..."}'
@@ -15,59 +20,54 @@ export const parseYTSourceText = (text: string, ytSearchData: string[]) => {
   const [, right] = text.split(searchMatch);
 
   const ytInitialDataArr = right.trim().split('');
-  const jsonCollected = validateEachCharacter(ytInitialDataArr, '{', '[');
-  return jsonCollected;
-};
 
-const charValidators: any = {
-  '{': ['{', '}'],
-  '[': ['[', ']'],
-};
+  const jsonParsed = validateEachCharacter(ytInitialDataArr);
 
-export const validateEachCharacter = (
-  ytInitialDataArr: string[],
-  charValidator: string,
-  charToJump: string
-) => {
-  let jsonCollected = '';
-  const matchers = charValidators[charValidator];
-  const isJump = charValidators[charToJump];
-
-  let counterCharValidator = 0;
-  let prevCharValidator = charValidator;
-
-  for (let i = 0; i < ytInitialDataArr.length; i++) {
-    const char = ytInitialDataArr[i];
-    jsonCollected += char;
-
-    const matchWithBracket =
-      isJump.includes(prevCharValidator) && isJump.includes(char);
-    if (matchWithBracket) {
-      const newJsonCollected = validateEachCharacter(
-        ytInitialDataArr.slice(i),
-        charToJump,
-        charValidator
-      );
-      jsonCollected += newJsonCollected;
-      continue;
-    }
-
-    const matchWithCurlyBracket =
-      matchers.includes(prevCharValidator) && matchers.includes(char);
-    if (matchWithCurlyBracket && char === prevCharValidator) {
-      counterCharValidator++;
-    }
-    if (matchWithCurlyBracket && char !== prevCharValidator) {
-      counterCharValidator--;
-    }
-    if (matchers.includes(char)) {
-      prevCharValidator = char;
-    }
-
-    if (counterCharValidator === 0) {
-      return jsonCollected;
-    }
+  try {
+    return JSON.parse(jsonParsed);
+  } catch (error) {
+    throw new Error('Error parsing json string');
   }
+};
 
-  return jsonCollected;
+export const validateEachCharacter = (ytInitialDataArr: string[]) => {
+  let iterator = 0;
+  let jsonCollected = '';
+
+  const recursion = (starterChar: string) => {
+    let matcherChar = starterChar;
+    let jumperChar = starterChar === '{' ? '[' : '{';
+
+    let counterCharValidator = 0;
+    let matchers = charValidators[matcherChar];
+    let jumpers = charValidators[jumperChar];
+
+    while (iterator < ytInitialDataArr.length) {
+      const char = ytInitialDataArr[iterator];
+
+      const matchWithJumperChar = jumpers[0] === char;
+      if (matchWithJumperChar) {
+        recursion(jumperChar);
+        continue;
+      }
+
+      const matchWithValidChar = matchers.includes(char);
+      if (matchWithValidChar && char === matchers[0]) {
+        counterCharValidator++;
+      }
+      if (matchWithValidChar && char === matchers[1]) {
+        counterCharValidator--;
+      }
+
+      jsonCollected += char;
+      iterator++;
+      if (counterCharValidator === 0) {
+        return jsonCollected;
+      }
+    }
+
+    return jsonCollected;
+  };
+
+  return recursion('{');
 };
