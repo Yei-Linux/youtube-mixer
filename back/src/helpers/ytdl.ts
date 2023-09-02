@@ -5,6 +5,8 @@ import { filterByExtension } from './data';
 import { TGetStream } from '../types/conversion';
 import ytpl from 'ytpl';
 import Miniget from 'miniget';
+import { parseYTSourceText } from './parse';
+import { IPlayList } from '../types/playlist';
 
 export const getYtPlaylist = async (ytPlaylistId: string) => {
   try {
@@ -16,16 +18,33 @@ export const getYtPlaylist = async (ytPlaylistId: string) => {
   }
 };
 
-export const getYtMixList = async (baseVideoId: string, listId: string) => {
+export const getYtMixList = async (
+  baseVideoId: string,
+  listId: string
+): Promise<IPlayList> => {
   try {
     const url = `https://www.youtube.com/watch?${new URLSearchParams({
       v: baseVideoId,
       list: listId,
     })}`;
-    const response = await Miniget(url, {}).text();
-    console.log('test', url);
-    console.log('test', response);
-  } catch (error) {}
+    const response = (await Miniget(url, {}).text()).toString();
+
+    const playListGeneral = parseYTSourceText(response, [
+      '{"playlist":',
+      ' {"playlist" : ',
+      '{"playlist": ',
+      ' {"playlist":',
+    ]);
+    const playList: IPlayList = playListGeneral?.contents;
+
+    if (!playList || !playList?.length) {
+      throw new Error('Playlist is empty.Probably json parsed was not correct');
+    }
+
+    return playList;
+  } catch (error) {
+    throw new Error((error as Error).message);
+  }
 };
 
 export const getYtInfo = async (ytUrl: string) => {

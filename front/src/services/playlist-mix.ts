@@ -18,7 +18,7 @@ export const getYtPlaylist = async ({
       })}`
     );
     const data = await response.json();
-    return data?.playListVideos;
+    return data?.playlistUI;
   } catch (error) {
     throw new Error('Error: ', (error as any).message);
   }

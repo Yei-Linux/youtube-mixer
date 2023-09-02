@@ -4,10 +4,15 @@ import { FormField } from '@/componets/ui/FormField';
 import { FC } from 'react';
 
 export interface IPLayListVideo {
-  url: string;
-  bestThumbnail: string;
+  videoUrl: string;
+  thumbnail: {
+    url: string;
+    width: string;
+    height: string;
+  };
   title: string;
-  duration: string;
+  videoId: string;
+  thumbnailOverlays: string;
 }
 
 export interface IList {
@@ -17,23 +22,28 @@ export interface IList {
 export const List: FC<IList> = ({ playListVideos }) => {
   return (
     <div>
-      {playListVideos?.map(({ url, bestThumbnail, title, duration }) => (
-        <div className="flex justify-between" key={url}>
-          <FormField
-            htmlFor={`${url}__checkbox`}
-            labelText={
-              <YoutubeCover
-                src={bestThumbnail}
-                videoTitle={title}
-                videoDuration={duration}
-                alt={title}
+      {playListVideos?.map(
+        ({ title, thumbnailOverlays, thumbnail, videoId, videoUrl }) => (
+          <div className="flex justify-between" key={videoId}>
+            <FormField
+              htmlFor={`${videoId}__checkbox`}
+              labelText={
+                <YoutubeCover
+                  src={thumbnail.url}
+                  videoTitle={title}
+                  videoDuration={thumbnailOverlays}
+                  alt={title}
+                />
+              }
+            >
+              <Checkbox
+                id={`${videoId}__checkbox`}
+                name={`${videoId}__checkbox`}
               />
-            }
-          >
-            <Checkbox id={`${url}__checkbox`} name={`${url}__checkbox`} />
-          </FormField>
-        </div>
-      ))}
+            </FormField>
+          </div>
+        )
+      )}
     </div>
   );
 };

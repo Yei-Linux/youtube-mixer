@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getYtMixList, getYtPlaylist } from '../helpers/ytdl';
+import { getPlayList } from '../services/youtube-mix-playlist.service';
 
 export const getYTMixPlaylist = async (req: Request, res: Response) => {
   const searchParams = req.query;
@@ -7,13 +7,10 @@ export const getYTMixPlaylist = async (req: Request, res: Response) => {
   const baseVideoId = searchParams?.baseVideoId as string;
 
   try {
-    if (!listId) throw new Error('ListId was not passed.');
-    if (!baseVideoId) throw new Error('BaseVideoId was not passed.');
-
-    const playList = await getYtMixList(baseVideoId, listId);
+    const playlistUI = await getPlayList(baseVideoId, listId);
 
     res.status(200).send({
-      playListVideos: [],
+      playlistUI,
     });
   } catch (error) {
     console.log('error:', error);

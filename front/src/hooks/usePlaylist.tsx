@@ -10,11 +10,11 @@ export const usePlaylist = () => {
   const getValidPlaylistId = (playlistSerch?: string) => {
     if (!playlistSerch) throw new Error('Playlist search should be filled');
 
-    const searchParams = new URLSearchParams(playlistSerch);
+    const url = new URL(playlistSerch);
+    const searchParams = new URLSearchParams(url.search);
+
     const baseVideoId = searchParams.get('v');
     const listId = searchParams.get('list');
-    const indexVideo = searchParams.get('index');
-    console.log('test', baseVideoId, listId, indexVideo);
 
     if (!listId || !baseVideoId) throw new Error('Invalid parameters');
 

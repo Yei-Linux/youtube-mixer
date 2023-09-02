@@ -4,9 +4,9 @@ const charValidators: any = {
 };
 
 /**
- * @summary Parse text string and convert it to json finding ytInitialData
- * @summary Filter by '"playlist":{"title": "..."}'
+ * @summary Parse text string and convert it to json finding ytInitialData.
  * @param text
+ * @param ytSearchData: Splitter key
  */
 export const parseYTSourceText = (text: string, ytSearchData: string[]) => {
   if (!ytSearchData.length) throw new Error('ytSearchData parameter is empty');
@@ -19,9 +19,14 @@ export const parseYTSourceText = (text: string, ytSearchData: string[]) => {
 
   const [, right] = text.split(searchMatch);
 
-  const ytInitialDataArr = right.trim().replace(/\n/g, '').split('');
+  const ytInitialDataArr = right
+    .trim()
+    .replace(/\n/g, '')
+    .replace(/\\/g, '')
+    .replace(/" /g, '"');
+  const textSplitter = ytInitialDataArr.split('');
 
-  const jsonParsed = validateEachCharacter(ytInitialDataArr);
+  const jsonParsed = validateEachCharacter(textSplitter);
 
   try {
     return JSON.parse(jsonParsed);
@@ -30,6 +35,9 @@ export const parseYTSourceText = (text: string, ytSearchData: string[]) => {
     throw new Error('Error parsing json string');
   }
 };
+
+//TODO: Refactor and add validation of doble quotes inside double quotes and so on...
+//TODO: Posible fix with regex .replace(/\\/g, ''). Check it out.
 
 /**
  * @summary Loop each character and extract only the object part from string
@@ -51,9 +59,10 @@ export const validateEachCharacter = (ytInitialDataArr: string[]) => {
 
     while (iterator < ytInitialDataArr.length) {
       const char = ytInitialDataArr[iterator];
-      const nextChar = ytInitialDataArr[iterator + 1];
+      const nextChar = ytInitialDataArr?.[iterator + 1];
+
       const nextCharIsAValidCloseString =
-        [':', '}', ']', ',', ' '].includes(nextChar) && char === '"';
+        [':', '}', ']', ','].includes(nextChar) && char === '"';
 
       const matchWithJumperChar = jumpers[0] === char && !isInString;
       if (matchWithJumperChar) {

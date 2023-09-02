@@ -2,6 +2,7 @@ import { INiceFormat, TExtension, TFormatsGrouped } from '../types/conversion';
 import ytdl from 'ytdl-core';
 import fs from 'fs';
 import { v4 as uuid } from 'uuid';
+import { IPlayList } from '../types/playlist';
 
 /**
  * Template to format time element
@@ -99,3 +100,23 @@ export const groupFormatsByExtension = (formatsYt: ytdl.videoFormat[]) => {
 
   return formatsGrouped;
 };
+
+export const transformPLaylistToUIPlaylist = (playlist: IPlayList) =>
+  playlist.map(
+    ({
+      playlistPanelVideoRenderer: {
+        title,
+        videoId,
+        thumbnail,
+        thumbnailOverlays,
+      },
+    }) => ({
+      title: title?.simpleText,
+      videoId,
+      videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
+      thumbnail: thumbnail?.thumbnails.slice(-1)?.at(0),
+      thumbnailOverlays: thumbnailOverlays?.find(
+        (item) => !!item?.thumbnailOverlayTimeStatusRenderer
+      )?.thumbnailOverlayTimeStatusRenderer?.text?.simpleText,
+    })
+  );
