@@ -2,20 +2,29 @@ import classNames from 'classnames';
 import { FC, useState } from 'react';
 
 interface ITab {
+  bodyTabClass?: string;
   bodyContent: React.ReactNode;
+  headerTabClass?: string;
   headerContent: React.ReactNode;
 }
 interface ITabs {
   tabs: ITab[];
+  bodyClass?: string;
+  headerClass?: string;
 }
-export const Tabs: FC<ITabs> = ({ tabs }) => {
+export const Tabs: FC<ITabs> = ({ tabs, bodyClass, headerClass }) => {
   const [tabSelected, setTabSelected] = useState(0);
 
   return (
     <div>
-      <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200">
-        {tabs.map(({ headerContent }, index) => (
-          <li className="mr-2" key={index}>
+      <ul
+        className={classNames(
+          'flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200',
+          headerClass
+        )}
+      >
+        {tabs.map(({ headerContent, headerTabClass }, index) => (
+          <li className={classNames('mr-2', headerTabClass)} key={index}>
             <a
               href="#"
               aria-current="page"
@@ -31,11 +40,17 @@ export const Tabs: FC<ITabs> = ({ tabs }) => {
         ))}
       </ul>
 
-      <ul className="p-4 font-light">
-        {tabs.map(
-          ({ bodyContent }, index) =>
-            tabSelected === index && <li key={index}>{bodyContent}</li>
-        )}
+      <ul className={classNames('p-4 font-light', bodyClass)}>
+        {tabs.map(({ bodyContent, bodyTabClass }, index) => (
+          <li
+            key={index}
+            className={classNames(bodyTabClass, {
+              hidden: tabSelected !== index,
+            })}
+          >
+            {bodyContent}
+          </li>
+        ))}
       </ul>
     </div>
   );

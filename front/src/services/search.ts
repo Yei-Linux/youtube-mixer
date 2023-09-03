@@ -1,10 +1,10 @@
 import { BASE_PATH_EXPRESS } from '@/helpers/data';
 
-export const searchYtdlVideo = async (url: string) => {
+export const searchYtdlVideo = async (videoId: string) => {
   try {
     const response = await fetch(
       `${BASE_PATH_EXPRESS}/api/youtube-search?${new URLSearchParams({
-        url,
+        videoId,
       })}`
     );
     const data = await response.json();

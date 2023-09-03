@@ -7,7 +7,10 @@ import {
 
 export const ytSearch = async (req: Request, res: Response) => {
   const searchParams = req.query;
-  const ybVideoUrl = searchParams?.url as string;
+  const videoId = searchParams?.videoId as string;
+  const ybVideoUrl = `https://www.youtube.com/watch?${new URLSearchParams({
+    v: videoId,
+  })}`;
 
   try {
     if (!ybVideoUrl) throw new Error('Youtube Video Url was not passed.');

@@ -1,25 +1,10 @@
 import { IPLayListVideo } from '@/componets/Manager/components/Playlist/List';
 import { getYtPlaylist } from '@/services/playlist-mix';
+import { useYtVideoStore } from '@/store';
 import { FormEvent, useState } from 'react';
 
 export const usePlaylist = () => {
-  const [playlistVideosInfo, setPlayListVideosInfo] = useState<
-    IPLayListVideo[]
-  >([]);
-
-  const getValidPlaylistId = (playlistSerch?: string) => {
-    if (!playlistSerch) throw new Error('Playlist search should be filled');
-
-    const url = new URL(playlistSerch);
-    const searchParams = new URLSearchParams(url.search);
-
-    const baseVideoId = searchParams.get('v');
-    const listId = searchParams.get('list');
-
-    if (!listId || !baseVideoId) throw new Error('Invalid parameters');
-
-    return { baseVideoId, listId };
-  };
+  const playlistVideosInfo = useYtVideoStore((store) => store.playlistSearched);
 
   const handleMixPlaylist = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,20 +17,5 @@ export const usePlaylist = () => {
     } catch (error) {}
   };
 
-  const handleGetPlaylistById = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const dataForm = new FormData(e.target as HTMLFormElement);
-    const playlistSearch = dataForm.get('search_pl_input')?.toString();
-
-    try {
-      const listParams = getValidPlaylistId(playlistSearch);
-      const playlistVideos = await getYtPlaylist(listParams);
-      setPlayListVideosInfo(playlistVideos);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  return { playlistVideosInfo, handleMixPlaylist, handleGetPlaylistById };
+  return { playlistVideosInfo, handleMixPlaylist };
 };

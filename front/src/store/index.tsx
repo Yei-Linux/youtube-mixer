@@ -2,17 +2,35 @@ import { Socket } from 'socket.io-client';
 import { IMetaVideoInfo } from '../types/conversion';
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
+import { IPLayListVideo } from '@/componets/Manager/components/Playlist/List';
+
+export const placeholderMultipleVideo = [
+  {
+    videoUrl: '',
+    title: 'Here will be your video title',
+    videoId: '0',
+    thumbnailOverlays: 'Here will be your video duration',
+    thumbnail: {
+      url: 'https://blog.rincondelvago.com/wp-content/themes/publisher/images/default-thumb/publisher-lg.png',
+      width: '300px',
+      height: '300px',
+    },
+  },
+];
 
 export interface IYtVideoStore {
   socket?: Socket<any, any>;
   userId: string;
+  playlistSearched: IPLayListVideo[];
   metaInfo: IMetaVideoInfo;
+  setPlaylistSearched: (value: IPLayListVideo[]) => void;
   setMetaInfo: (value: IMetaVideoInfo) => void;
   setSocket: (value: Socket<any, any>) => void;
 }
 
 export const useYtVideoStore = create<IYtVideoStore>((set) => ({
   userId: uuidv4(),
+  playlistSearched: [],
   metaInfo: {
     src: 'https://blog.rincondelvago.com/wp-content/themes/publisher/images/default-thumb/publisher-lg.png',
     alt: 'Youtube Cover',
@@ -20,6 +38,11 @@ export const useYtVideoStore = create<IYtVideoStore>((set) => ({
     videoDuration: 'Here will be your video duration',
     url: '',
   },
+  setPlaylistSearched: (value: IPLayListVideo[]) =>
+    set((state: IYtVideoStore) => ({
+      ...state,
+      playlistSearched: value,
+    })),
   setMetaInfo: (value: IMetaVideoInfo) =>
     set((state: IYtVideoStore) => ({
       ...state,

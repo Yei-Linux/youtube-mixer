@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import Image from 'next/image';
 import { FC } from 'react';
 
@@ -6,6 +7,10 @@ export interface IYoutubeCover {
   alt: string;
   videoTitle: string;
   videoDuration: string;
+  titleClassname?: string;
+  durationClassname?: string;
+  metaDataClassname?: string;
+  figureClassname?: string;
 }
 
 export const YoutubeCover: FC<IYoutubeCover> = ({
@@ -13,14 +18,29 @@ export const YoutubeCover: FC<IYoutubeCover> = ({
   alt,
   videoTitle,
   videoDuration,
+  titleClassname,
+  durationClassname,
+  metaDataClassname,
+  figureClassname,
 }) => {
   return (
-    <figure className="flex flex-col gap-3 items-center">
-      <Image src={src} alt={alt} width={300} height={150} />
-      <figcaption className="text-center">🎥 Title: {videoTitle}</figcaption>
-      <figcaption className="text-center">
-        🎬 Duration: {videoDuration}
-      </figcaption>
+    <figure
+      className={classNames('rounded-md', 'overflow-hidden', figureClassname)}
+    >
+      <Image src={src} alt={alt} width={360} height={150} />
+      <div
+        className={classNames(
+          'w-full flex flex-col gap-3 p-3',
+          metaDataClassname
+        )}
+      >
+        <figcaption className={classNames(durationClassname)}>
+          🎬 Duration: {videoDuration}
+        </figcaption>
+        <figcaption className={classNames(titleClassname)}>
+          🎥 Title: {videoTitle}
+        </figcaption>
+      </div>
     </figure>
   );
 };

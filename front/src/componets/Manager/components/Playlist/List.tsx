@@ -1,4 +1,3 @@
-import { YoutubeCover } from '@/componets/Search/components/YoutubeCover/YoutubeCover';
 import { Checkbox } from '@/componets/ui/Checkbox';
 import { FormField } from '@/componets/ui/FormField';
 import { FC } from 'react';
@@ -21,21 +20,11 @@ export interface IList {
 
 export const List: FC<IList> = ({ playListVideos }) => {
   return (
-    <div>
+    <div className="max-h-[500px] overflow-auto">
       {playListVideos?.map(
         ({ title, thumbnailOverlays, thumbnail, videoId, videoUrl }) => (
           <div className="flex justify-between" key={videoId}>
-            <FormField
-              htmlFor={`${videoId}__checkbox`}
-              labelText={
-                <YoutubeCover
-                  src={thumbnail.url}
-                  videoTitle={title}
-                  videoDuration={thumbnailOverlays}
-                  alt={title}
-                />
-              }
-            >
+            <FormField htmlFor={`${videoId}__checkbox`} labelText={title}>
               <Checkbox
                 id={`${videoId}__checkbox`}
                 name={`${videoId}__checkbox`}
