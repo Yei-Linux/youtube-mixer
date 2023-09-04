@@ -9,10 +9,7 @@ const PlaceholderSingleVideo = () => {
 
   return (
     <div className="max-w-fit m-auto">
-      <YoutubeCover
-        {...metaInfo}
-        figureClassname={classNames('bg-[#848aff]', 'text-[#ebeaea]')}
-      />
+      <YoutubeCover {...metaInfo} />
     </div>
   );
 };
@@ -48,13 +45,12 @@ const PlaceholderMultipleVideo = () => {
                 src={thumbnail.url}
                 videoTitle={title}
                 videoDuration={thumbnailOverlays}
-                figureClassname={classNames('bg-[#848aff]', 'text-[#ebeaea]')}
                 titleClassname={classNames({
-                  'text-[12px]': playList.length > 1,
+                  'text-xs': playList.length > 1,
                   'text-left': playList.length > 1,
                 })}
                 durationClassname={classNames({
-                  'text-[12px]': playList.length > 1,
+                  'text-xs': playList.length > 1,
                   'text-left': playList.length > 1,
                 })}
                 alt={title}
@@ -68,6 +64,7 @@ const PlaceholderMultipleVideo = () => {
         <div className="w-full flex justify-center mb-7">
           <Pagination
             total={pages}
+            variant="light"
             color="primary"
             page={currentPage}
             onChange={setCurrentPage}

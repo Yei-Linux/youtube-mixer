@@ -6,7 +6,7 @@ import { Placeholder } from '../Placeholder/Placeholder';
 export const SingleVideo = () => {
   return (
     <Fragment>
-      <div className="flex flex-col justify-center min-h-[50%]">
+      <div className="flex flex-col justify-center min-h-[50%] mb-5">
         <Search isMultiple={false} />
         <Placeholder>
           <Placeholder.SingleVideo />

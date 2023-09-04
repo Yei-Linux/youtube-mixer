@@ -27,13 +27,13 @@ export const DownloadTable: FC<IDownloadTable> = ({ extension }) => {
       <table className="max-w-[700px] table-auto border-separate border-spacing-x-10 border-spacing-y-2">
         <thead>
           <tr className="table w-full table-fixed">
-            <th className="font-bold text-lg text-center text-blue-500">
+            <th className="font-semibold text-lg text-center text-primary">
               Quality
             </th>
-            <th className="font-bold text-lg text-center text-blue-500">
+            <th className="font-semibold text-lg text-center text-primary">
               Size
             </th>
-            <th className="font-bold text-lg text-center text-blue-500">
+            <th className="font-semibold text-lg text-center text-primary">
               Status
             </th>
           </tr>
@@ -41,9 +41,11 @@ export const DownloadTable: FC<IDownloadTable> = ({ extension }) => {
         <tbody className="block max-h-[220px] overflow-y-scroll">
           {formats.map((format, index) => (
             <tr key={index} className="table w-full table-fixed">
-              <td>{getQualityLabel(format)[extension]}</td>
-              <td>{[format.size, 'MB'].join(' ')}</td>
-              <td>
+              <td className="text-center">
+                {getQualityLabel(format)[extension]}
+              </td>
+              <td className="text-center">{[format.size, 'MB'].join(' ')}</td>
+              <td className="text-center">
                 <ActionButtons
                   operationId={format.operationId}
                   onDownload={() =>

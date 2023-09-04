@@ -19,23 +19,25 @@ export const Tabs: FC<ITabs> = ({ tabs, bodyClass, headerClass }) => {
     <div>
       <ul
         className={classNames(
-          'flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200',
+          'flex flex-wrap text-sm font-medium text-center text-gray-500',
           headerClass
         )}
       >
         {tabs.map(({ headerContent, headerTabClass }, index) => (
           <li className={classNames('mr-2', headerTabClass)} key={index}>
-            <a
-              href="#"
+            <span
               aria-current="page"
-              className={classNames('inline-block p-4 rounded-t-lg', {
-                'text-blue-600 bg-gray-100 active': tabSelected === index,
-                'hover:text-gray-600 hover:bg-gray-50': tabSelected !== index,
-              })}
+              className={classNames(
+                'inline-block p-4 rounded-t-lg cursor-pointer',
+                {
+                  'text-primary bg-gray-100 active': tabSelected === index,
+                  'hover:text-gray-600 hover:bg-gray-50': tabSelected !== index,
+                }
+              )}
               onClick={() => setTabSelected(index)}
             >
               {headerContent}
-            </a>
+            </span>
           </li>
         ))}
       </ul>

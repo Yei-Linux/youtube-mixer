@@ -1,6 +1,8 @@
-import { Checkbox } from '@/componets/ui/Checkbox';
-import { FormField } from '@/componets/ui/FormField';
-import { FC } from 'react';
+import { FC, useState } from 'react';
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { NonSelectedList } from './NonSelectedList';
+import { SelectedList } from './SelectedList';
+import { Button } from '@/componets/ui/Button';
 
 export interface IPLayListVideo {
   videoUrl: string;
@@ -14,25 +16,54 @@ export interface IPLayListVideo {
   thumbnailOverlays: string;
 }
 
-export interface IList {
-  playListVideos: IPLayListVideo[];
-}
+export interface IList {}
 
-export const List: FC<IList> = ({ playListVideos }) => {
+export const List: FC<IList> = ({}) => {
+  const [selectedVideos, setSelectedVideos] = useState<IPLayListVideo[]>([]);
+
+  const handleAddSelectedVideos = (nonselectedform: HTMLFormElement) => {
+    const formVideosNonSelected = Object.fromEntries(
+      new FormData(nonselectedform)
+    );
+    console.log(formVideosNonSelected);
+
+    const checkedVideos: IPLayListVideo[] = [];
+    // setSelectedVideos((prev) => [...prev, ...checkedVideos]);
+  };
+
+  const handleRemoveSelectedVideos = (selectedform: HTMLFormElement) => {
+    const formVideosSelected = Object.fromEntries(new FormData(selectedform));
+    console.log(formVideosSelected);
+
+    const checkedVideos: IPLayListVideo[] = [];
+    const ids = checkedVideos.map(({ videoId }) => videoId);
+    // setSelectedVideos((prev) =>
+    //   prev.filter(({ videoId }) => !ids.includes(videoId))
+    //  );
+  };
+
+  const decideWichOne = (e: any) => {
+    e.preventDefault();
+    const id = e.nativeEvent.submitter.id;
+    if (!['add', 'remove'].includes(id)) return;
+    const isForAdding = id === 'add';
+
+    if (isForAdding) return handleAddSelectedVideos(e.target);
+    return handleRemoveSelectedVideos(e.target);
+  };
+
   return (
-    <div className="max-h-[500px] overflow-auto">
-      {playListVideos?.map(
-        ({ title, thumbnailOverlays, thumbnail, videoId, videoUrl }) => (
-          <div className="flex justify-between" key={videoId}>
-            <FormField htmlFor={`${videoId}__checkbox`} labelText={title}>
-              <Checkbox
-                id={`${videoId}__checkbox`}
-                name={`${videoId}__checkbox`}
-              />
-            </FormField>
-          </div>
-        )
-      )}
-    </div>
+    <form className="flex gap-3" onSubmit={decideWichOne}>
+      <NonSelectedList selectedVideos={selectedVideos} />
+      <div className="flex flex-col justify-center items-center gap-3 p-3">
+        <Button className="rounded-md" type="submit" id="remove">
+          <FaArrowLeft className="text-white" />
+        </Button>
+        <Button className="rounded-md" type="submit" id="add">
+          <FaArrowRight className="text-white" />
+        </Button>
+      </div>
+      <SelectedList selectedVideos={selectedVideos} />
+    </form>
   );
 };

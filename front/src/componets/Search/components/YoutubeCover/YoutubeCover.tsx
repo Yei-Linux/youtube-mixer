@@ -25,7 +25,16 @@ export const YoutubeCover: FC<IYoutubeCover> = ({
 }) => {
   return (
     <figure
-      className={classNames('rounded-md', 'overflow-hidden', figureClassname)}
+      className={classNames(
+        'rounded-md',
+        'overflow-hidden',
+        'max-w-[360px]',
+        'bg-opacity-80 backdrop-blur-xl drop-shadow-lg',
+        'bg-[#848aff]',
+        'text-[#ebeaea]',
+        'cursor-pointer',
+        figureClassname
+      )}
     >
       <Image src={src} alt={alt} width={360} height={150} />
       <div
@@ -34,11 +43,21 @@ export const YoutubeCover: FC<IYoutubeCover> = ({
           metaDataClassname
         )}
       >
-        <figcaption className={classNames(durationClassname)}>
-          🎬 Duration: {videoDuration}
+        <figcaption
+          className={classNames(
+            'flex gap-3',
+            'text-sm',
+            'text-bold',
+            titleClassname
+          )}
+        >
+          <span> 🎥 </span>
+          <strong className="multiline-ellipsis">{videoTitle}</strong>
         </figcaption>
-        <figcaption className={classNames(titleClassname)}>
-          🎥 Title: {videoTitle}
+        <figcaption
+          className={classNames('flex gap-3', 'text-sm', durationClassname)}
+        >
+          <span>🎬</span> <strong>{videoDuration}</strong>
         </figcaption>
       </div>
     </figure>

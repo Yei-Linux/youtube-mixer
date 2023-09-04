@@ -5,7 +5,6 @@ import { FormField } from '../ui/FormField';
 import { Input } from '../ui/Input';
 import { useYoutubeSearch } from '../../hooks';
 
-import { YoutubeCover } from './components/YoutubeCover/YoutubeCover';
 import { FC, useMemo } from 'react';
 
 export interface ISearch {
@@ -24,6 +23,7 @@ export const Search: FC<ISearch> = ({ isMultiple }) => {
       <form onSubmit={(e) => handleSearch(e, isMultiple)}>
         <FormField
           htmlFor="search_input"
+          labelClassName="mb-2"
           labelText={<span className="text-md">{youtubeSearchTitle}</span>}
         >
           <div className="flex gap-5">
