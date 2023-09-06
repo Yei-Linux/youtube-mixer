@@ -1,18 +1,17 @@
 import { Checkbox } from '@/componets/ui/Checkbox';
-import { useYtVideoStore } from '@/store';
 import classNames from 'classnames';
 import { IPLayListVideo } from './List';
 import { FC } from 'react';
 
 export interface INonSelectedList {
-  selectedVideos: IPLayListVideo[];
+  nonSelectedVideos: IPLayListVideo[];
 }
-export const NonSelectedList: FC<INonSelectedList> = ({ selectedVideos }) => {
-  const playListVideos = useYtVideoStore((store) => store.playlistSearched);
-
+export const NonSelectedList: FC<INonSelectedList> = ({
+  nonSelectedVideos,
+}) => {
   return (
-    <div className="max-h-[500px] overflow-auto flex flex-col gap-3">
-      {playListVideos?.map(
+    <div className="max-h-[500px] overflow-auto flex flex-col gap-3 min-w-[350px]">
+      {nonSelectedVideos?.map(
         ({ title, thumbnailOverlays, thumbnail, videoId, videoUrl }) => (
           <label
             key={videoId}

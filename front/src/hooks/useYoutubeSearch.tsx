@@ -10,6 +10,9 @@ export const useYoutubeSearch = () => {
   const setPlaylistSearched = useYtVideoStore(
     (state) => state.setPlaylistSearched
   );
+  const setMixingOperationId = useYtVideoStore(
+    (state) => state.setMixingOperationId
+  );
 
   const searchMultipleVideo = async (url: string) => {
     const urlRequest = new URL(url);
@@ -21,8 +24,9 @@ export const useYoutubeSearch = () => {
 
     const listParams = { baseVideoId, listId };
     try {
-      const playlistVideos = await getYtPlaylist(listParams);
-      setPlaylistSearched(playlistVideos);
+      const { playlistUI, operationId } = await getYtPlaylist(listParams);
+      setPlaylistSearched(playlistUI);
+      setMixingOperationId(operationId);
     } catch (error) {
       console.error('Search API error: ', error);
     }

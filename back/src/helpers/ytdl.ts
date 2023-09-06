@@ -2,19 +2,45 @@ import ytdl from 'ytdl-core';
 import internal from 'node:stream';
 import fs from 'fs';
 import { filterByExtension } from './data';
-import { TGetStream } from '../types/conversion';
-import ytpl from 'ytpl';
+import { TExtension, TGetStream } from '../types/conversion';
 import Miniget from 'miniget';
 import { parseYTSourceText } from './parse';
 import { IPlayList } from '../types/playlist';
+import path from 'path';
 
-export const getYtPlaylist = async (ytPlaylistId: string) => {
+export const getPlaylistYtbStream = async (
+  videoIds: string[],
+  ytdlUserBasePath: string,
+  extension: TExtension
+) => {
   try {
-    const playlist = await ytpl(ytPlaylistId);
-    if (!playlist) throw new Error('Invalid ytPlaylist Id');
-    return playlist;
+    const promisesForStreammingYT = videoIds.map((videoId) => {
+      const ytUrl = `https://www.youtube.com/watch?${new URLSearchParams({
+        v: videoId,
+      })}`;
+      const ytdlUserPath = path.join(
+        ytdlUserBasePath,
+        `ytdl_${videoId}.${extension}`
+      );
+
+      return getYtbStream({
+        ytdlUserPath,
+        ytUrl,
+        extension,
+        itag: 0,
+      });
+    });
+
+    await Promise.all(promisesForStreammingYT);
+
+    const fileNames = fs.readdirSync(ytdlUserBasePath);
+
+    if (!fileNames.length)
+      throw new Error('Youtube Files was not saved into directory');
+
+    return fileNames;
   } catch (error) {
-    throw new Error((error as any).message);
+    throw new Error((error as Error).message);
   }
 };
 

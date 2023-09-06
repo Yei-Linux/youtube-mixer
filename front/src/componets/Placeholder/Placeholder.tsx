@@ -31,8 +31,8 @@ const PlaceholderMultipleVideo = () => {
   }, [currentPage, playList]);
 
   return (
-    <div className="flex flex-col gap-7">
-      <div className="flex justify-center flex-wrap gap-7 max-h-[700px] overflow-auto">
+    <div className="flex flex-col gap-7 items-center">
+      <div className="flex flex-wrap gap-7 max-h-[700px] max-w-[900px] overflow-auto">
         {currentItemsFromPage?.map(
           ({ title, thumbnailOverlays, thumbnail, videoId, videoUrl }) => (
             <div

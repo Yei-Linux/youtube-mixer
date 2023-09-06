@@ -21,15 +21,18 @@ export const placeholderMultipleVideo = [
 export interface IYtVideoStore {
   socket?: Socket<any, any>;
   userId: string;
+  mixingOperationId: string;
   playlistSearched: IPLayListVideo[];
   metaInfo: IMetaVideoInfo;
   setPlaylistSearched: (value: IPLayListVideo[]) => void;
   setMetaInfo: (value: IMetaVideoInfo) => void;
   setSocket: (value: Socket<any, any>) => void;
+  setMixingOperationId: (value: string) => void;
 }
 
 export const useYtVideoStore = create<IYtVideoStore>((set) => ({
   userId: uuidv4(),
+  mixingOperationId: '',
   playlistSearched: [],
   metaInfo: {
     src: 'https://blog.rincondelvago.com/wp-content/themes/publisher/images/default-thumb/publisher-lg.png',
@@ -38,6 +41,11 @@ export const useYtVideoStore = create<IYtVideoStore>((set) => ({
     videoDuration: 'Here will be your video duration',
     url: '',
   },
+  setMixingOperationId: (value: string) =>
+    set((state: IYtVideoStore) => ({
+      ...state,
+      mixingOperationId: value,
+    })),
   setPlaylistSearched: (value: IPLayListVideo[]) =>
     set((state: IYtVideoStore) => ({
       ...state,

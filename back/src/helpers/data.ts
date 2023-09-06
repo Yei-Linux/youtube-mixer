@@ -32,9 +32,16 @@ export const getTimeFormatBySeconds = (seconds: number) => {
 };
 
 export const filterByExtension = (format: ytdl.videoFormat, itag: number) => ({
-  mp3: format.hasAudio && !format.hasVideo && format.itag === itag,
-  mp4: format.hasAudio && format.hasVideo && format.itag === itag,
-  mp4WithoutAudio: !format.hasAudio && format.hasVideo && format.itag === itag,
+  mp3:
+    format.hasAudio &&
+    !format.hasVideo &&
+    (!itag ? true : format.itag === itag),
+  mp4:
+    format.hasAudio && format.hasVideo && (!itag ? true : format.itag === itag),
+  mp4WithoutAudio:
+    !format.hasAudio &&
+    format.hasVideo &&
+    (!itag ? true : format.itag === itag),
 });
 
 export const transformToNiceFormat = (

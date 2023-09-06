@@ -6,10 +6,15 @@ interface IYtPlaylistparams {
   listId: string;
 }
 
+interface IResponse {
+  playlistUI: IPLayListVideo[];
+  operationId: string;
+}
+
 export const getYtPlaylist = async ({
   baseVideoId,
   listId,
-}: IYtPlaylistparams): Promise<IPLayListVideo[]> => {
+}: IYtPlaylistparams): Promise<IResponse> => {
   try {
     const response = await fetch(
       `${BASE_PATH_EXPRESS}/api/youtube-mix-playlist?${new URLSearchParams({
@@ -18,7 +23,32 @@ export const getYtPlaylist = async ({
       })}`
     );
     const data = await response.json();
-    return data?.playlistUI;
+    return data;
+  } catch (error) {
+    throw new Error('Error: ', (error as any).message);
+  }
+};
+
+export interface IMixPlaylist {
+  baseVideoId: string;
+}
+export const mixPlayList = async (
+  body: any,
+  userId: string,
+  operationId: string
+) => {
+  try {
+    const url = `${BASE_PATH_EXPRESS}/api/youtube-mix-playlist`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        userId,
+        operationId,
+      },
+      body: JSON.stringify(body),
+    });
+    const blob = await response.blob();
+    return blob;
   } catch (error) {
     throw new Error('Error: ', (error as any).message);
   }

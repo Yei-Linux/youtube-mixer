@@ -8,7 +8,7 @@ export interface ISelectedList {
 }
 export const SelectedList: FC<ISelectedList> = ({ selectedVideos }) => {
   return (
-    <div className="max-h-[500px] overflow-auto flex flex-col gap-3">
+    <div className="max-h-[500px] overflow-auto flex flex-col gap-3 min-w-[350px]">
       {selectedVideos?.map(
         ({ title, thumbnailOverlays, thumbnail, videoId, videoUrl }) => (
           <label
