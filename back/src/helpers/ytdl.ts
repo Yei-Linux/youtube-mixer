@@ -7,6 +7,7 @@ import Miniget from 'miniget';
 import { parseYTSourceText } from './parse';
 import { IPlayList } from '../types/playlist';
 import path from 'path';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 export const getPlaylistYtbStream = async (
   videoIds: string[],
@@ -14,7 +15,9 @@ export const getPlaylistYtbStream = async (
   extension: TExtension
 ) => {
   try {
-    const promisesForStreammingYT = videoIds.map((videoId) => {
+    for (let i = 0; i < videoIds.length; i++) {
+      const videoId = videoIds[i];
+
       const ytUrl = `https://www.youtube.com/watch?${new URLSearchParams({
         v: videoId,
       })}`;
@@ -23,15 +26,13 @@ export const getPlaylistYtbStream = async (
         `ytdl_${videoId}.${extension}`
       );
 
-      return getYtbStream({
+      await getYtbStream({
         ytdlUserPath,
         ytUrl,
         extension,
         itag: 0,
       });
-    });
-
-    await Promise.all(promisesForStreammingYT);
+    }
 
     const fileNames = fs.readdirSync(ytdlUserBasePath);
 
@@ -74,8 +75,13 @@ export const getYtMixList = async (
 };
 
 export const getYtInfo = async (ytUrl: string) => {
-  const response = await ytdl.getInfo(ytUrl);
-  return response;
+  try {
+    const response = await ytdl.getInfo(ytUrl, {});
+    return response;
+  } catch (error) {
+    console.log('test???', error);
+    throw new Error('Error');
+  }
 };
 
 const filterYTDLVideo =
@@ -103,10 +109,9 @@ export const getYtbStream = ({
       reject(Error('Error getting yt video: ' + error.message));
     });
 
-    ytVideoInternalReadable.on(
-      'progress',
-      (chunkLength, downloaded, total) => {}
-    );
+    ytVideoInternalReadable.on('progress', (chunkLength, downloaded, total) => {
+      console.log('Downloading progress: ', downloaded, total);
+    });
 
     ytVideoInternalReadable.pipe(
       fs

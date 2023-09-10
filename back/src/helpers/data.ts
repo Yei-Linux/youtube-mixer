@@ -3,6 +3,7 @@ import ytdl from 'ytdl-core';
 import fs from 'fs';
 import { v4 as uuid } from 'uuid';
 import { IPlayList } from '../types/playlist';
+import nodePath from 'path';
 
 /**
  * Template to format time element
@@ -35,13 +36,18 @@ export const filterByExtension = (format: ytdl.videoFormat, itag: number) => ({
   mp3:
     format.hasAudio &&
     !format.hasVideo &&
-    (!itag ? true : format.itag === itag),
+    (!itag
+      ? format.quality === 'medium' ||
+        format.audioQuality === 'AUDIO_QUALITY_MEDIUM'
+      : format.itag === itag),
   mp4:
-    format.hasAudio && format.hasVideo && (!itag ? true : format.itag === itag),
+    format.hasAudio &&
+    format.hasVideo &&
+    (!itag ? format.quality === 'medium' : format.itag === itag),
   mp4WithoutAudio:
     !format.hasAudio &&
     format.hasVideo &&
-    (!itag ? true : format.itag === itag),
+    (!itag ? format.quality === 'medium' : format.itag === itag),
 });
 
 export const transformToNiceFormat = (
@@ -71,6 +77,23 @@ export const removeFilesProcessed = (
   const downloadExist = fs.existsSync(downloadedUserPath);
   ydtlExist && fs.unlinkSync(ytdlUserPath);
   downloadExist && fs.unlinkSync(downloadedUserPath);
+};
+
+export const removeFolderProcessed = (path: string) => {
+  const isExists = fs.existsSync(path);
+
+  if (!isExists) return;
+
+  try {
+    const files = fs.readdirSync(path);
+
+    files.map((filepath) => {
+      const fullFilePath = nodePath.join(path, filepath);
+      fs.unlinkSync(fullFilePath);
+    });
+  } catch (error) {
+    console.log('test', error);
+  }
 };
 
 export const groupFormatsByExtension = (formatsYt: ytdl.videoFormat[]) => {
@@ -127,3 +150,11 @@ export const transformPLaylistToUIPlaylist = (playlist: IPlayList) =>
       )?.thumbnailOverlayTimeStatusRenderer?.text?.simpleText,
     })
   );
+
+export const createFoldersInCaseNotExistsOnPath = (path: string) => {
+  const isExists = fs.existsSync(path);
+  if (isExists) return;
+
+  fs.mkdirSync(path);
+  return;
+};

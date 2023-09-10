@@ -6,7 +6,11 @@ import {
   getPlayList,
   mixPlayList,
 } from '../services/youtube-mix-playlist.service';
-import { removeFilesProcessed } from '../helpers/data';
+import {
+  createFoldersInCaseNotExistsOnPath,
+  removeFilesProcessed,
+  removeFolderProcessed,
+} from '../helpers/data';
 import { v4 as uuid } from 'uuid';
 
 export const getYTMixPlaylist = async (req: Request, res: Response) => {
@@ -40,7 +44,6 @@ export const mixYTPlaylist = async (req: Request, res: Response) => {
   const socketInstance = io.to(socketId);
 
   const body = req.body;
-  console.log('test', body);
   const videoIds = body.videoIds;
   const extension = body.extension;
 
@@ -49,6 +52,9 @@ export const mixYTPlaylist = async (req: Request, res: Response) => {
     'files',
     `downloaded_${userId}_${operationId}.${extension}`
   );
+
+  createFoldersInCaseNotExistsOnPath(ytdlUserBasePath);
+  createFoldersInCaseNotExistsOnPath(downloadedUserPath);
 
   try {
     await mixPlayList(
@@ -63,11 +69,13 @@ export const mixYTPlaylist = async (req: Request, res: Response) => {
     const file = fs.createReadStream(downloadedUserPath);
     file.pipe(res);
     file.on('close', () => {
-      removeFilesProcessed(ytdlUserBasePath, downloadedUserPath);
+      removeFolderProcessed(ytdlUserBasePath);
+      removeFolderProcessed(downloadedUserPath);
     });
   } catch (error) {
     console.log('error:', error);
-    removeFilesProcessed(ytdlUserBasePath, downloadedUserPath);
+    removeFolderProcessed(ytdlUserBasePath);
+    removeFolderProcessed(downloadedUserPath);
     res.status(500).send({
       error: (error as Error).message,
     });

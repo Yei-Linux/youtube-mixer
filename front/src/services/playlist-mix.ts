@@ -44,6 +44,7 @@ export const mixPlayList = async (
       headers: {
         userId,
         operationId,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
     });

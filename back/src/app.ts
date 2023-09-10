@@ -19,6 +19,11 @@ const io = require('socket.io')(server, {
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
 const PORT = 3001;
 const sockets: any = {};
