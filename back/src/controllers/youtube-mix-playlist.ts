@@ -8,6 +8,7 @@ import {
 } from '../services/youtube-mix-playlist.service';
 import {
   createFoldersInCaseNotExistsOnPath,
+  removeFileProcessed,
   removeFilesProcessed,
   removeFolderProcessed,
 } from '../helpers/data';
@@ -54,7 +55,6 @@ export const mixYTPlaylist = async (req: Request, res: Response) => {
   );
 
   createFoldersInCaseNotExistsOnPath(ytdlUserBasePath);
-  createFoldersInCaseNotExistsOnPath(downloadedUserPath);
 
   try {
     await mixPlayList(
@@ -70,12 +70,12 @@ export const mixYTPlaylist = async (req: Request, res: Response) => {
     file.pipe(res);
     file.on('close', () => {
       removeFolderProcessed(ytdlUserBasePath);
-      removeFolderProcessed(downloadedUserPath);
+      removeFileProcessed(downloadedUserPath);
     });
   } catch (error) {
     console.log('error:', error);
     removeFolderProcessed(ytdlUserBasePath);
-    removeFolderProcessed(downloadedUserPath);
+    removeFileProcessed(downloadedUserPath);
     res.status(500).send({
       error: (error as Error).message,
     });

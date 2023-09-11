@@ -79,6 +79,11 @@ export const removeFilesProcessed = (
   downloadExist && fs.unlinkSync(downloadedUserPath);
 };
 
+export const removeFileProcessed = (path: string) => {
+  const isExists = fs.existsSync(path);
+  isExists && fs.unlinkSync(path);
+};
+
 export const removeFolderProcessed = (path: string) => {
   const isExists = fs.existsSync(path);
 
@@ -91,6 +96,8 @@ export const removeFolderProcessed = (path: string) => {
       const fullFilePath = nodePath.join(path, filepath);
       fs.unlinkSync(fullFilePath);
     });
+
+    fs.rmdirSync(path);
   } catch (error) {
     console.log('test', error);
   }

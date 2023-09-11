@@ -29,13 +29,16 @@ export const mixPlayList = async (
   const ytdlUserPaths = await getPlaylistYtbStream(
     videoIds,
     ytdlUserBasePath,
-    extension
+    extension,
+    socketInstance,
+    operationId
   );
   await mergeStreams(
     extension,
     downloaderUserPath,
     ytdlUserPaths,
     socketInstance,
-    operationId
+    operationId,
+    ytdlUserBasePath
   );
 };

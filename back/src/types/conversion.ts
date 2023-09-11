@@ -15,6 +15,9 @@ export interface IDownloadYt {
 }
 export type TGetStream = RequiredNonNullableObject<IDownloadYt> & {
   ytdlUserPath: string;
+  socket: any;
+  operationId: string;
+  eventName: 'uploadProgressDownloadSingle' | 'uploadProgressDownloadMix';
 };
 
 export interface INiceFormat {

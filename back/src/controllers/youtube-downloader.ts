@@ -5,6 +5,7 @@ import { extensionEquivalents, removeFilesProcessed } from '../helpers/data';
 import { getYtbStream } from '../helpers/ytdl';
 import { streamToExtension } from '../helpers/streams';
 import fs from 'fs';
+import { UPLOAD_PROGRESS_STEPONE_SINGLE } from '../constants/socket';
 
 export const ytDownloader = async (req: Request, res: Response) => {
   const userId = req.headers?.userid as string;
@@ -49,6 +50,9 @@ export const ytDownloader = async (req: Request, res: Response) => {
       ytdlUserPath,
       extension: extension as TGetStream['extension'],
       itag: +itag,
+      socket: socketInstance,
+      operationId,
+      eventName: UPLOAD_PROGRESS_STEPONE_SINGLE,
     });
     await streamToExtension(
       validExtension,

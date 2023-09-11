@@ -8,11 +8,14 @@ import { parseYTSourceText } from './parse';
 import { IPlayList } from '../types/playlist';
 import path from 'path';
 import { HttpsProxyAgent } from 'https-proxy-agent';
+import { UPLOAD_PROGRESS_STEPONE_MIX } from '../constants/socket';
 
 export const getPlaylistYtbStream = async (
   videoIds: string[],
   ytdlUserBasePath: string,
-  extension: TExtension
+  extension: TExtension,
+  socket: any,
+  operationId: string
 ) => {
   try {
     for (let i = 0; i < videoIds.length; i++) {
@@ -31,6 +34,9 @@ export const getPlaylistYtbStream = async (
         ytUrl,
         extension,
         itag: 0,
+        socket,
+        operationId,
+        eventName: UPLOAD_PROGRESS_STEPONE_MIX,
       });
     }
 
@@ -85,7 +91,12 @@ export const getYtInfo = async (ytUrl: string) => {
 };
 
 const filterYTDLVideo =
-  (moreOptions: Omit<TGetStream, 'ytUrl' | 'ytdlUserPath'>) =>
+  (
+    moreOptions: Omit<
+      TGetStream,
+      'ytUrl' | 'ytdlUserPath' | 'socket' | 'operationId' | 'eventName'
+    >
+  ) =>
   (format: ytdl.videoFormat) => {
     const match = filterByExtension(format, moreOptions.itag)[
       moreOptions.extension
@@ -97,8 +108,18 @@ const filterYTDLVideo =
 export const getYtbStream = ({
   ytUrl,
   ytdlUserPath,
+  socket,
+  operationId,
+  eventName,
   ...moreOptions
 }: TGetStream): Promise<internal.Readable> => {
+  socket.emit(eventName, {
+    status: 'start',
+    progressInfo: null,
+    operationId,
+    step: 1,
+  });
+
   //Ref: https://nodejs.org/api/stream.html#class-streamreadable
   return new Promise((resolve, reject) => {
     const ytVideoInternalReadable = ytdl(ytUrl, {
@@ -110,6 +131,17 @@ export const getYtbStream = ({
     });
 
     ytVideoInternalReadable.on('progress', (chunkLength, downloaded, total) => {
+      const progressInfo = {
+        percent: Math.max(0, Math.round((downloaded / total) * 100)),
+        time: '00:00:00',
+      };
+
+      socket.emit(eventName, {
+        status: 'progress',
+        progressInfo,
+        operationId,
+        step: 1,
+      });
       console.log('Downloading progress: ', downloaded, total);
     });
 
@@ -121,9 +153,21 @@ export const getYtbStream = ({
         })
         .on('finish', async () => {
           console.log('YTDL Downloaded completed');
+          socket.emit(eventName, {
+            status: 'end',
+            progressInfo: null,
+            operationId,
+            step: 1,
+          });
           resolve(ytVideoInternalReadable);
         })
         .on('error', async (error) => {
+          socket.emit(eventName, {
+            status: 'error',
+            progressInfo: null,
+            operationId,
+            step: 1,
+          });
           reject(Error('Error getting stream first part: ' + error.message));
         })
     );
