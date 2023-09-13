@@ -1,10 +1,13 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { NonSelectedList } from './NonSelectedList';
 import { SelectedList } from './SelectedList';
 import { Button } from '@/componets/ui/Button';
 import { useTransferSelection } from './useTransferSelection';
 import { usePlaylist } from '@/hooks';
+import { ProgressBarWrapper } from '@/componets/ProgressWrapper/ProgressWrapper';
+import { Select } from '@/componets/ui/Select';
+import { TExtension } from '@/types/conversion';
 
 export interface IPLayListVideo {
   videoUrl: string;
@@ -21,13 +24,23 @@ export interface IPLayListVideo {
 export interface IList {}
 
 export const List: FC<IList> = ({}) => {
+  const [extension, setExtension] = useState('mp3');
   const { decideWichOne, nonSelectedVideos, selectedVideos } =
     useTransferSelection();
 
-  const { handleMixPlaylist } = usePlaylist();
+  const { handleMixPlaylist, operationId } = usePlaylist();
 
   return (
     <div className="flex flex-col gap-7">
+      <div className="mb-3">
+        <Select
+          value={extension}
+          onChange={(e) => setExtension(e.target.value as TExtension)}
+        >
+          <Select.Option value="mp3">MP3</Select.Option>
+        </Select>
+      </div>
+
       <form className="flex flex-wrap gap-3" onSubmit={decideWichOne}>
         <NonSelectedList nonSelectedVideos={nonSelectedVideos} />
         <div className="flex flex-col justify-center items-center gap-3 p-3">
@@ -41,9 +54,11 @@ export const List: FC<IList> = ({}) => {
         <SelectedList selectedVideos={selectedVideos} />
       </form>
 
-      <Button onClick={() => handleMixPlaylist(selectedVideos)}>
-        Mix selected videos
-      </Button>
+      <ProgressBarWrapper operationId={operationId} eventName="MIX">
+        <Button onClick={() => handleMixPlaylist(selectedVideos, extension)}>
+          Mix selected videos
+        </Button>
+      </ProgressBarWrapper>
     </div>
   );
 };

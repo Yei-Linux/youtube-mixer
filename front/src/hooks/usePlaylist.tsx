@@ -8,10 +8,13 @@ export const usePlaylist = () => {
   const operationId = useYtVideoStore((store) => store.mixingOperationId);
   const playlistVideosInfo = useYtVideoStore((store) => store.playlistSearched);
 
-  const handleMixPlaylist = async (selectedVideos: IPLayListVideo[]) => {
+  const handleMixPlaylist = async (
+    selectedVideos: IPLayListVideo[],
+    extension: string
+  ) => {
     if (!selectedVideos.length) return;
+    if (selectedVideos.length > 5) return;
 
-    const extension = 'mp3';
     const videoIds = selectedVideos.map(({ videoId }) => videoId);
 
     const blob = await mixPlayList(
@@ -28,5 +31,5 @@ export const usePlaylist = () => {
     } catch (error) {}
   };
 
-  return { playlistVideosInfo, handleMixPlaylist };
+  return { playlistVideosInfo, handleMixPlaylist, operationId };
 };

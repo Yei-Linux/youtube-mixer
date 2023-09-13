@@ -1,7 +1,6 @@
+import { ProgressBarWrapper } from '@/componets/ProgressWrapper/ProgressWrapper';
 import { Button } from '@/componets/ui/Button';
-import { ProgressBar } from '@/componets/ui/ProgressBar';
-import { useProgress } from '@/hooks';
-import { FC, Fragment } from 'react';
+import { FC } from 'react';
 
 export interface IActionButtons {
   operationId: string;
@@ -11,17 +10,9 @@ export const ActionButtons: FC<IActionButtons> = ({
   operationId,
   onDownload,
 }) => {
-  const { progress, isStartProgress } = useProgress({ operationId });
-
   return (
-    <Fragment>
-      {isStartProgress ? (
-        <div>
-          <ProgressBar percent={progress} />
-        </div>
-      ) : (
-        <Button onClick={onDownload}>Download</Button>
-      )}
-    </Fragment>
+    <ProgressBarWrapper operationId={operationId} eventName="SINGLE">
+      <Button onClick={onDownload}>Download</Button>
+    </ProgressBarWrapper>
   );
 };

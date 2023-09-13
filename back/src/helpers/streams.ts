@@ -7,6 +7,7 @@ import {
   UPLOAD_PROGRESS_STEPTWO_MIX,
   UPLOAD_PROGRESS_STEPTWO_SINGLE,
 } from '../constants/socket';
+import { MERGE_TMP_PATH } from '../constants/stream';
 
 export const mergeStreams = async (
   extension: TExtension,
@@ -29,12 +30,11 @@ export const mergeStreams = async (
 
     ytdlUserPaths.map((path) => {
       const resultPath = nodePath.join(ytdlUserPath, path);
-      ffmpegWithInputs.addInput(resultPath);
+      ffmpegWithInputs = ffmpegWithInputs.input(resultPath);
     });
 
     ffmpegWithInputs
-      .format(extension)
-      .output(downloadedUserPath)
+      .audioBitrate('320k')
       .on('progress', (progress) => {
         const progressInfo = {
           percent: Math.max(0, Math.round(+progress.percent)),
@@ -69,7 +69,7 @@ export const mergeStreams = async (
         });
         return reject(err);
       })
-      .run();
+      .mergeToFile(downloadedUserPath, MERGE_TMP_PATH);
   });
 };
 
