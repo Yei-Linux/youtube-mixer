@@ -3,3 +3,4 @@ export * from './useYoutubeDownload';
 export * from './useProgress';
 export * from './useSocket';
 export * from './usePlaylist';
+export * from './useTranscript';

@@ -3,6 +3,7 @@ import { IMetaVideoInfo } from '../types/conversion';
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
 import { IPLayListVideo } from '@/componets/Manager/components/Playlist/List';
+import { ITranscriptionDataResponse } from '@/types/transcription';
 
 export const placeholderMultipleVideo = [
   {
@@ -24,10 +25,12 @@ export interface IYtVideoStore {
   mixingOperationId: string;
   playlistSearched: IPLayListVideo[];
   metaInfo: IMetaVideoInfo;
+  transcription?: ITranscriptionDataResponse;
   setPlaylistSearched: (value: IPLayListVideo[]) => void;
   setMetaInfo: (value: IMetaVideoInfo) => void;
   setSocket: (value: Socket<any, any>) => void;
   setMixingOperationId: (value: string) => void;
+  setTranscription: (value: ITranscriptionDataResponse) => void;
 }
 
 export const useYtVideoStore = create<IYtVideoStore>((set) => ({
@@ -41,6 +44,11 @@ export const useYtVideoStore = create<IYtVideoStore>((set) => ({
     videoDuration: 'Here will be your video duration',
     url: '',
   },
+  setTranscription: (value: ITranscriptionDataResponse) =>
+    set((state: IYtVideoStore) => ({
+      ...state,
+      transcription: value,
+    })),
   setMixingOperationId: (value: string) =>
     set((state: IYtVideoStore) => ({
       ...state,
