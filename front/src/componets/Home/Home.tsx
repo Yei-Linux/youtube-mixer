@@ -13,6 +13,8 @@ export const Home = () => {
   return (
     <main className="w-full h-screen grid">
       <Tabs
+        className="overflow-auto"
+        idTab="home_tabs_container"
         bodyClass={classNames(styles.manager_body_tabcontent)}
         tabs={[
           {

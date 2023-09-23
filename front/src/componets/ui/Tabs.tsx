@@ -8,15 +8,23 @@ interface ITab {
   headerContent: React.ReactNode;
 }
 interface ITabs {
+  className?: string;
+  idTab?: string;
   tabs: ITab[];
   bodyClass?: string;
   headerClass?: string;
 }
-export const Tabs: FC<ITabs> = ({ tabs, bodyClass, headerClass }) => {
+export const Tabs: FC<ITabs> = ({
+  idTab,
+  tabs,
+  bodyClass,
+  headerClass,
+  className,
+}) => {
   const [tabSelected, setTabSelected] = useState(0);
 
   return (
-    <div>
+    <div id={idTab} className={classNames(className)}>
       <ul
         className={classNames(
           'flex flex-wrap text-sm font-medium text-center text-gray-500',

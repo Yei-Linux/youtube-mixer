@@ -24,6 +24,7 @@ const config: Config = {
             primary: {
               DEFAULT: '#848aff',
               foreground: '#ECEDEE',
+              200: '#e5e6ff',
             },
           },
         },
