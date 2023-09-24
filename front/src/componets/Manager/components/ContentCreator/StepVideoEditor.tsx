@@ -1,11 +1,12 @@
 import { useYtVideoStore } from '@/store';
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import styles from './contentcreator.module.css';
 import classNames from 'classnames';
 import { Word } from './Word';
 import { useVideoEditor } from '@/hooks/useVideoEditor';
 import { useHighlightEditor } from '@/hooks/useHighlightEditor';
 import { SelectionOption } from './SelectionOptions';
+import { Button } from '@/componets/ui/Button';
 
 export interface IVideoEditor {
   video: File;
@@ -18,6 +19,7 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
     textSelectionOptionsPosition,
     isOnHighlightRange,
     isOnSelectionRange,
+    isOnRemovePhraseRange,
     handleMouseDownToStartSelection,
     handleMouseOverToStartSelection,
     isVisibleSelectionOptionsPosition,
@@ -25,6 +27,9 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
     handleAddHighlight,
     handleRemoveFromTextSelections,
     handleShowTooltipForHightlight,
+    handleRemovePhrasesOrWords,
+    textSelections,
+    phraseRemoved,
   } = useHighlightEditor();
 
   return (
@@ -50,7 +55,9 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
             <li className="" onClick={handleAddHighlight}>
               Add to Highlights
             </li>
-            <li className="">Remove Phrase</li>
+            <li className="" onClick={handleRemovePhrasesOrWords}>
+              Remove Phrase
+            </li>
           </SelectionOption>
 
           <SelectionOption
@@ -73,6 +80,7 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
                 className={classNames({
                   'bg-primary-200': isOnHighlightRange(indexParent, index),
                   'bg-indigo-300': isOnSelectionRange(indexParent, index),
+                  hidden: isOnRemovePhraseRange(indexParent, index),
                 })}
                 onClick={() => {
                   const isTextSelected = isOnSelectionRange(indexParent, index);
@@ -92,6 +100,12 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
       </div>
       <div className={classNames('min-w-[50%]')}>
         <video controls className="w-full" ref={videoRef} id="video" />
+        <div className="p-4 flex flex-col gap-4">
+          <p className="text-center text-md">
+            You removed {phraseRemoved?.length ?? 0} phrases from this video
+          </p>
+          <Button isDisabled={!textSelections.length}>Generate Shorts</Button>
+        </div>
       </div>
     </div>
   );

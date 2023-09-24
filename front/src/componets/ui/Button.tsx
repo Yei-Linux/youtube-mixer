@@ -8,6 +8,7 @@ export interface IButton {
   children: React.ReactNode;
   onClick?: TButtonClick;
   className?: string;
+  isDisabled?: boolean;
 }
 
 export const Button: FC<IButton> = ({
@@ -15,10 +16,12 @@ export const Button: FC<IButton> = ({
   onClick,
   className,
   id,
+  isDisabled,
   type = 'button',
 }) => (
   <button
     id={id}
+    disabled={isDisabled}
     type={type}
     onClick={onClick}
     className={classNames(

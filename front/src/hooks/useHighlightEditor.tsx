@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 export interface ITextSelection {
   positionStartX: number;
@@ -24,6 +24,8 @@ export const useHighlightEditor = () => {
   const [isTextSelecting, setIsTextSelecting] = useState(false);
   const [currentTextSelection, setCurrentTextSelection] =
     useState<ITextSelection | null>(null);
+
+  const [phraseRemoved, setPhraseWordsRemoved] = useState<ITextSelection[]>([]);
   const [textSelections, setTextSelections] = useState<ITextSelection[]>([]);
 
   const isVisibleSelectionOptionsPosition = useMemo(
@@ -74,6 +76,12 @@ export const useHighlightEditor = () => {
     setTextSelectionOptionsPosition({ ...found, ...positions });
   };
 
+  const handleRemovePhrasesOrWords = () => {
+    if (!currentTextSelection) return;
+    setPhraseWordsRemoved((prev) => [...prev, currentTextSelection]);
+    setCurrentTextSelection(null);
+  };
+
   const handleAddHighlight = () => {
     if (!currentTextSelection) return;
     setTextSelections((prev) => [...prev, currentTextSelection]);
@@ -96,14 +104,25 @@ export const useHighlightEditor = () => {
     );
     if (!transcriptionContainerElement) return;
 
+    const widthSelectionOptions = 120;
     const scroll = transcriptionContainerElement.scrollTop;
+    const scrollWidth = transcriptionContainerElement.clientWidth;
     const { left, top } = HTMLElement.getBoundingClientRect();
 
-    return { left, top: top - 110 + scroll };
+    const diffWithSelectionWidth = scrollWidth - widthSelectionOptions;
+    const leftComputed = Math.min(left, diffWithSelectionWidth);
+
+    return { left: leftComputed, top: top - 110 + scroll };
   };
 
   const handleOnMouseUp = (e: MouseEvent) => {
     setIsTextSelecting(false);
+
+    const transcriptionContainerElement = document.querySelector(
+      '#transcription_container'
+    );
+    const isClickedInsideTranscriptionContainer =
+      transcriptionContainerElement?.contains(e.target as any);
     const textSelectionOptionsContainer = document.querySelector(
       '#text_selection_options'
     );
@@ -111,9 +130,20 @@ export const useHighlightEditor = () => {
       e.target as any
     );
 
-    !isClickedInside &&
-      textSelectionOptionsPosition &&
-      setTextSelectionOptionsPosition(null);
+    const validationSelectionOptions = !!(
+      transcriptionContainerElement &&
+      !isClickedInsideTranscriptionContainer &&
+      currentTextSelection &&
+      selectionOptionsPosition
+    );
+    validationSelectionOptions && setCurrentTextSelection(null);
+
+    const validationTextSelectionOptions = !!(
+      textSelectionOptionsContainer &&
+      !isClickedInside &&
+      textSelectionOptionsPosition
+    );
+    validationTextSelectionOptions && setTextSelectionOptionsPosition(null);
 
     const positions = handleGetPositionsSelectionOptions(currentTextSelection);
     if (!positions) {
@@ -127,7 +157,11 @@ export const useHighlightEditor = () => {
     window.addEventListener('mouseup', handleOnMouseUp);
 
     return () => window.removeEventListener('mouseup', handleOnMouseUp);
-  }, [currentTextSelection, textSelectionOptionsPosition]);
+  }, [
+    currentTextSelection,
+    selectionOptionsPosition,
+    textSelectionOptionsPosition,
+  ]);
 
   const conditionRange = (
     selection: ITextSelection | null,
@@ -161,6 +195,15 @@ export const useHighlightEditor = () => {
       );
     },
     [textSelections]
+  );
+
+  const isOnRemovePhraseRange = useCallback(
+    (indexParent: number, index: number) => {
+      return phraseRemoved.some((item) =>
+        conditionRange(item, indexParent, index)
+      );
+    },
+    [phraseRemoved]
   );
 
   const handleMouseDownToStartSelection = (
@@ -198,6 +241,7 @@ export const useHighlightEditor = () => {
     textSelectionOptionsPosition,
     isOnHighlightRange,
     isOnSelectionRange,
+    isOnRemovePhraseRange,
     handleMouseDownToStartSelection,
     handleMouseOverToStartSelection,
     isVisibleSelectionOptionsPosition,
@@ -205,5 +249,8 @@ export const useHighlightEditor = () => {
     handleAddHighlight,
     handleRemoveFromTextSelections,
     handleShowTooltipForHightlight,
+    handleRemovePhrasesOrWords,
+    textSelections,
+    phraseRemoved,
   };
 };

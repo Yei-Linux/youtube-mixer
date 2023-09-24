@@ -20,7 +20,7 @@ export const SelectionOption: FC<ISelectionOption> = ({
     <div
       id={id}
       className={classNames(
-        'absolute bg-primary text-white p-2 text-xs rounded-lg hover:cursor-pointer',
+        'w-[120px] absolute bg-primary text-white p-2 text-xs rounded-lg hover:cursor-pointer',
         {
           hidden: isHidden,
         }
