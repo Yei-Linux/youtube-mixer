@@ -15,6 +15,7 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
   const transcription = useYtVideoStore((store) => store.transcription);
   const { videoRef } = useVideoEditor({ video });
   const {
+    textSelectionOptionsPosition,
     isOnHighlightRange,
     isOnSelectionRange,
     handleMouseDownToStartSelection,
@@ -22,6 +23,8 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
     isVisibleSelectionOptionsPosition,
     selectionOptionsPosition,
     handleAddHighlight,
+    handleRemoveFromTextSelections,
+    handleShowTooltipForHightlight,
   } = useHighlightEditor();
 
   return (
@@ -39,11 +42,28 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
           id="transcription_container"
         >
           <SelectionOption
+            id="selection_options"
             top={selectionOptionsPosition?.top ?? -1}
             left={selectionOptionsPosition?.left ?? -1}
             isHidden={!isVisibleSelectionOptionsPosition}
-            onAddToHightLight={handleAddHighlight}
-          />
+          >
+            <li className="" onClick={handleAddHighlight}>
+              Add to Highlights
+            </li>
+            <li className="">Remove Phrase</li>
+          </SelectionOption>
+
+          <SelectionOption
+            id="text_selection_options"
+            top={textSelectionOptionsPosition?.top ?? -1}
+            left={textSelectionOptionsPosition?.left ?? -1}
+            isHidden={!textSelectionOptionsPosition}
+          >
+            <li className="" onClick={handleRemoveFromTextSelections}>
+              Remove from Highlights
+            </li>
+          </SelectionOption>
+
           {transcription?.timeline.map(({ words }, indexParent) =>
             words.map((word, index) => (
               <Word
@@ -54,6 +74,11 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
                   'bg-primary-200': isOnHighlightRange(indexParent, index),
                   'bg-indigo-300': isOnSelectionRange(indexParent, index),
                 })}
+                onClick={() => {
+                  const isTextSelected = isOnSelectionRange(indexParent, index);
+                  if (!isTextSelected) return;
+                  handleShowTooltipForHightlight(indexParent, index);
+                }}
                 onMouseDown={() =>
                   handleMouseDownToStartSelection(indexParent, index)
                 }

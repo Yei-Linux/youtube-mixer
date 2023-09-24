@@ -7,14 +7,19 @@ export interface ITextSelection {
   positionEndY: number;
 }
 
-export interface ISelectionOptionsPosition {
+export type ISelectionOptionsPosition = {
   top: number;
   left: number;
-}
+};
+
+export type ITextSelectionOptionsPosition = ISelectionOptionsPosition &
+  ITextSelection;
 
 export const useHighlightEditor = () => {
   const [selectionOptionsPosition, setSelectionOptionsPosition] =
     useState<ISelectionOptionsPosition | null>(null);
+  const [textSelectionOptionsPosition, setTextSelectionOptionsPosition] =
+    useState<ITextSelectionOptionsPosition | null>(null);
 
   const [isTextSelecting, setIsTextSelecting] = useState(false);
   const [currentTextSelection, setCurrentTextSelection] =
@@ -32,15 +37,54 @@ export const useHighlightEditor = () => {
     [isTextSelecting, currentTextSelection, selectionOptionsPosition]
   );
 
+  const handleRemoveFromTextSelections = () => {
+    if (!textSelectionOptionsPosition) return;
+
+    const foundIndex = textSelections.findIndex(
+      (textSelection) =>
+        textSelection.positionStartX ===
+          textSelectionOptionsPosition.positionStartX &&
+        textSelection.positionStartY ===
+          textSelectionOptionsPosition.positionStartY &&
+        textSelection.positionEndX ===
+          textSelectionOptionsPosition.positionEndX &&
+        textSelection.positionEndY === textSelectionOptionsPosition.positionEndY
+    );
+
+    if (foundIndex < 0) return;
+
+    setTextSelections((prev) =>
+      prev.filter((_, index) => index !== foundIndex)
+    );
+    setTextSelectionOptionsPosition(null);
+  };
+
+  const handleShowTooltipForHightlight = (
+    indexParent: number,
+    index: number
+  ) => {
+    const found = textSelections.find((textSelection) =>
+      conditionRange(textSelection, indexParent, index)
+    );
+    if (!found) return;
+
+    const positions = handleGetPositionsSelectionOptions(found);
+    if (!positions) return;
+
+    setTextSelectionOptionsPosition({ ...found, ...positions });
+  };
+
   const handleAddHighlight = () => {
     if (!currentTextSelection) return;
     setTextSelections((prev) => [...prev, currentTextSelection]);
     setCurrentTextSelection(null);
   };
 
-  const handleSetPositionsSelectionOptions = () => {
-    const positionEndX = currentTextSelection?.positionEndX;
-    const positionEndY = currentTextSelection?.positionEndY;
+  const handleGetPositionsSelectionOptions = (
+    textSelection: ITextSelection | null
+  ) => {
+    const positionEndX = textSelection?.positionEndX;
+    const positionEndY = textSelection?.positionEndY;
 
     if (!positionEndX || !positionEndY) return;
 
@@ -54,19 +98,36 @@ export const useHighlightEditor = () => {
 
     const scroll = transcriptionContainerElement.scrollTop;
     const { left, top } = HTMLElement.getBoundingClientRect();
-    setSelectionOptionsPosition({ left, top: top - 110 + scroll });
+
+    return { left, top: top - 110 + scroll };
   };
 
-  const handleOnMouseUp = () => {
+  const handleOnMouseUp = (e: MouseEvent) => {
     setIsTextSelecting(false);
-    handleSetPositionsSelectionOptions();
+    const textSelectionOptionsContainer = document.querySelector(
+      '#text_selection_options'
+    );
+    const isClickedInside = textSelectionOptionsContainer?.contains(
+      e.target as any
+    );
+
+    !isClickedInside &&
+      textSelectionOptionsPosition &&
+      setTextSelectionOptionsPosition(null);
+
+    const positions = handleGetPositionsSelectionOptions(currentTextSelection);
+    if (!positions) {
+      setSelectionOptionsPosition(null);
+      return;
+    }
+    setSelectionOptionsPosition(positions);
   };
 
   useEffect(() => {
     window.addEventListener('mouseup', handleOnMouseUp);
 
     return () => window.removeEventListener('mouseup', handleOnMouseUp);
-  }, [currentTextSelection]);
+  }, [currentTextSelection, textSelectionOptionsPosition]);
 
   const conditionRange = (
     selection: ITextSelection | null,
@@ -134,6 +195,7 @@ export const useHighlightEditor = () => {
   };
 
   return {
+    textSelectionOptionsPosition,
     isOnHighlightRange,
     isOnSelectionRange,
     handleMouseDownToStartSelection,
@@ -141,5 +203,7 @@ export const useHighlightEditor = () => {
     isVisibleSelectionOptionsPosition,
     selectionOptionsPosition,
     handleAddHighlight,
+    handleRemoveFromTextSelections,
+    handleShowTooltipForHightlight,
   };
 };

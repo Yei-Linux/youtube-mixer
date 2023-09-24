@@ -2,22 +2,23 @@ import classNames from 'classnames';
 import { FC } from 'react';
 
 export interface ISelectionOption {
+  id?: string;
   top: number;
   left: number;
   isHidden: boolean;
-  onAddToHightLight?: () => void;
-  onDeletePhraseOrWord?: () => void;
+  children: React.ReactNode;
 }
 
 export const SelectionOption: FC<ISelectionOption> = ({
+  id,
   top,
   left,
   isHidden,
-  onAddToHightLight,
-  onDeletePhraseOrWord,
+  children,
 }) => {
   return (
     <div
+      id={id}
       className={classNames(
         'absolute bg-primary text-white p-2 text-xs rounded-lg hover:cursor-pointer',
         {
@@ -29,14 +30,7 @@ export const SelectionOption: FC<ISelectionOption> = ({
         left,
       }}
     >
-      <ul className="flex flex-col gap-1">
-        <li className="" onClick={onAddToHightLight}>
-          Add to Highlights
-        </li>
-        <li className="" onClick={onDeletePhraseOrWord}>
-          Delete phrase or words
-        </li>
-      </ul>
+      <ul className="flex flex-col gap-1">{children}</ul>
     </div>
   );
 };
