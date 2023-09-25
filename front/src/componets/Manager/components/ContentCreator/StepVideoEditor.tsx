@@ -1,5 +1,5 @@
 import { useYtVideoStore } from '@/store';
-import { FC, useRef } from 'react';
+import { FC } from 'react';
 import styles from './contentcreator.module.css';
 import classNames from 'classnames';
 import { Word } from './Word';
@@ -16,6 +16,7 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
   const transcription = useYtVideoStore((store) => store.transcription);
   const { videoRef } = useVideoEditor({ video });
   const {
+    textRemovedOptionsPosition,
     textSelectionOptionsPosition,
     isOnHighlightRange,
     isOnSelectionRange,
@@ -30,6 +31,8 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
     handleRemovePhrasesOrWords,
     textSelections,
     phraseRemoved,
+    handleShowTooltipForRemoved,
+    handleRemoveFromTextRemoved,
   } = useHighlightEditor();
 
   return (
@@ -61,6 +64,17 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
           </SelectionOption>
 
           <SelectionOption
+            id="text_removed_options"
+            top={textRemovedOptionsPosition?.top ?? -1}
+            left={textRemovedOptionsPosition?.left ?? -1}
+            isHidden={!textRemovedOptionsPosition}
+          >
+            <li className="" onClick={handleRemoveFromTextRemoved}>
+              Delete from removing
+            </li>
+          </SelectionOption>
+
+          <SelectionOption
             id="text_selection_options"
             top={textSelectionOptionsPosition?.top ?? -1}
             left={textSelectionOptionsPosition?.left ?? -1}
@@ -80,12 +94,23 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
                 className={classNames({
                   'bg-primary-200': isOnHighlightRange(indexParent, index),
                   'bg-indigo-300': isOnSelectionRange(indexParent, index),
-                  hidden: isOnRemovePhraseRange(indexParent, index),
+                  'bg-red-300': isOnRemovePhraseRange(indexParent, index),
                 })}
                 onClick={() => {
                   const isTextSelected = isOnSelectionRange(indexParent, index);
-                  if (!isTextSelected) return;
-                  handleShowTooltipForHightlight(indexParent, index);
+                  if (isTextSelected) {
+                    handleShowTooltipForHightlight(indexParent, index);
+                    return;
+                  }
+
+                  const isTextRemoved = isOnRemovePhraseRange(
+                    indexParent,
+                    index
+                  );
+                  if (isTextRemoved) {
+                    handleShowTooltipForRemoved(indexParent, index);
+                    return;
+                  }
                 }}
                 onMouseDown={() =>
                   handleMouseDownToStartSelection(indexParent, index)
@@ -99,12 +124,33 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
         </div>
       </div>
       <div className={classNames('min-w-[50%]')}>
-        <video controls className="w-full" ref={videoRef} id="video" />
+        <div className="flex flex-col gap-3">
+          <video controls className="w-full" ref={videoRef} id="video" />
+          <p className="text-sm">
+            Video Duration: <strong></strong>
+          </p>
+        </div>
         <div className="p-4 flex flex-col gap-4">
           <p className="text-center text-md">
-            You removed {phraseRemoved?.length ?? 0} phrases from this video
+            You removed <strong>{phraseRemoved?.length ?? 0} phrases </strong>
+            from this video
+          </p>
+          <p className="text-center text-md">
+            You have marked{' '}
+            <strong>{textSelections?.length ?? 0} Highlights</strong> from this
+            video
           </p>
           <Button isDisabled={!textSelections.length}>Generate Shorts</Button>
+          <Button
+            className={classNames(
+              'bg-[white]',
+              'text-[#848aff]',
+              'border border-[#848aff]'
+            )}
+            isDisabled={!phraseRemoved.length}
+          >
+            Remove Prhases
+          </Button>
         </div>
       </div>
     </div>

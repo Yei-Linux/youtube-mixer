@@ -20,6 +20,8 @@ export const useHighlightEditor = () => {
     useState<ISelectionOptionsPosition | null>(null);
   const [textSelectionOptionsPosition, setTextSelectionOptionsPosition] =
     useState<ITextSelectionOptionsPosition | null>(null);
+  const [textRemovedOptionsPosition, setTextRemovedOptionsPosition] =
+    useState<ITextSelectionOptionsPosition | null>(null);
 
   const [isTextSelecting, setIsTextSelecting] = useState(false);
   const [currentTextSelection, setCurrentTextSelection] =
@@ -59,6 +61,37 @@ export const useHighlightEditor = () => {
       prev.filter((_, index) => index !== foundIndex)
     );
     setTextSelectionOptionsPosition(null);
+  };
+
+  const handleRemoveFromTextRemoved = () => {
+    if (!textRemovedOptionsPosition) return;
+
+    const foundIndex = phraseRemoved.findIndex(
+      (phrase) =>
+        phrase.positionStartX === textRemovedOptionsPosition.positionStartX &&
+        phrase.positionStartY === textRemovedOptionsPosition.positionStartY &&
+        phrase.positionEndX === textRemovedOptionsPosition.positionEndX &&
+        phrase.positionEndY === textRemovedOptionsPosition.positionEndY
+    );
+
+    if (foundIndex < 0) return;
+
+    setPhraseWordsRemoved((prev) =>
+      prev.filter((_, index) => index !== foundIndex)
+    );
+    setTextRemovedOptionsPosition(null);
+  };
+
+  const handleShowTooltipForRemoved = (indexParent: number, index: number) => {
+    const found = phraseRemoved.find((phrase) =>
+      conditionRange(phrase, indexParent, index)
+    );
+    if (!found) return;
+
+    const positions = handleGetPositionsSelectionOptions(found);
+    if (!positions) return;
+
+    setTextRemovedOptionsPosition({ ...found, ...positions });
   };
 
   const handleShowTooltipForHightlight = (
@@ -129,6 +162,12 @@ export const useHighlightEditor = () => {
     const isClickedInside = textSelectionOptionsContainer?.contains(
       e.target as any
     );
+    const textRemovedOptionsContainer = document.querySelector(
+      '#text_removed_options'
+    );
+    const isClickedInsideRemoved = textRemovedOptionsContainer?.contains(
+      e.target as any
+    );
 
     const validationSelectionOptions = !!(
       transcriptionContainerElement &&
@@ -144,6 +183,13 @@ export const useHighlightEditor = () => {
       textSelectionOptionsPosition
     );
     validationTextSelectionOptions && setTextSelectionOptionsPosition(null);
+
+    const validationTextRemovedOptions = !!(
+      textRemovedOptionsContainer &&
+      !isClickedInsideRemoved &&
+      textRemovedOptionsPosition
+    );
+    validationTextRemovedOptions && setTextSelectionOptionsPosition(null);
 
     const positions = handleGetPositionsSelectionOptions(currentTextSelection);
     if (!positions) {
@@ -238,6 +284,7 @@ export const useHighlightEditor = () => {
   };
 
   return {
+    textRemovedOptionsPosition,
     textSelectionOptionsPosition,
     isOnHighlightRange,
     isOnSelectionRange,
@@ -252,5 +299,7 @@ export const useHighlightEditor = () => {
     handleRemovePhrasesOrWords,
     textSelections,
     phraseRemoved,
+    handleShowTooltipForRemoved,
+    handleRemoveFromTextRemoved,
   };
 };
