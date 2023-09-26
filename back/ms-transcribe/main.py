@@ -1,4 +1,5 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, StreamingResponse
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import os
@@ -43,7 +44,7 @@ async def transcribe(file: UploadFile = File(...)):
 
 @app.post("/api/video-editor")
 async def video_editor(request: VideoEditorRequest ,file: UploadFile = File(...)):
-    if request.type is not 'cut' and request.type is not 'remove':
+    if request.type != 'cut' and request.type != 'remove':
         raise HTTPException(status_code =500, detail = "Type should be either cut or remove")
 
     unique_id_gen = unique_id()
@@ -55,9 +56,9 @@ async def video_editor(request: VideoEditorRequest ,file: UploadFile = File(...)
     rangesConfig = request.rangeConfig
     file_names: [str] = []
 
-    if request.type is 'cut':
+    if request.type == 'cut':
        file_names = await cut_video_by_ranges(path_video, rangesConfig, unique_id_gen)
-    if request.type is 'remove':
+    if request.type == 'remove':
        file_names = await remove_parts_from_video(path_video, rangesConfig, unique_id_gen)
 
     zip_io_values = zip_file(file_names)

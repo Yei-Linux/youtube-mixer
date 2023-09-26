@@ -7,6 +7,9 @@ import { useVideoEditor } from '@/hooks/useVideoEditor';
 import { useHighlightEditor } from '@/hooks/useHighlightEditor';
 import { SelectionOption } from './SelectionOptions';
 import { Button } from '@/componets/ui/Button';
+import { useRemoveVideoSections } from '@/hooks/useRemoveVideoSections';
+import { IRangeConfig } from '@/services';
+import { useGenerateHighlights } from '@/hooks';
 
 export interface IVideoEditor {
   video: File;
@@ -34,6 +37,45 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
     handleShowTooltipForRemoved,
     handleRemoveFromTextRemoved,
   } = useHighlightEditor();
+
+  const { handleFetchRemoveVideoSections } = useRemoveVideoSections();
+  const { handleFetchGenerateHighlights } = useGenerateHighlights();
+
+  const transformPhrasesToRemove = (): IRangeConfig[] => {
+    const transformed = (
+      phraseRemoved.filter(
+        ({ start, end }) => start != null && end != null
+      ) as IRangeConfig[]
+    ).map(({ start, end }) => ({ start, end }));
+
+    return transformed;
+  };
+
+  const transformTextSelections = (): IRangeConfig[] => {
+    const transformed = (
+      textSelections.filter(
+        ({ start, end }) => start != null && end != null
+      ) as IRangeConfig[]
+    ).map(({ start, end }) => ({ start, end }));
+
+    return transformed;
+  };
+
+  const handleFetchRemove = async () => {
+    const rangeConfig = transformPhrasesToRemove();
+    await handleFetchRemoveVideoSections({
+      rangeConfig,
+      type: 'remove',
+    });
+  };
+
+  const handleFetchHightlights = async () => {
+    const rangeConfig = transformTextSelections();
+    await handleFetchGenerateHighlights({
+      rangeConfig,
+      type: 'cut',
+    });
+  };
 
   return (
     <div
@@ -113,10 +155,14 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
                   }
                 }}
                 onMouseDown={() =>
-                  handleMouseDownToStartSelection(indexParent, index)
+                  handleMouseDownToStartSelection(
+                    indexParent,
+                    index,
+                    word.start
+                  )
                 }
                 onMouseOver={() =>
-                  handleMouseOverToStartSelection(indexParent, index)
+                  handleMouseOverToStartSelection(indexParent, index, word.end)
                 }
               />
             ))
@@ -140,8 +186,14 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
             <strong>{textSelections?.length ?? 0} Highlights</strong> from this
             video
           </p>
-          <Button isDisabled={!textSelections.length}>Generate Shorts</Button>
           <Button
+            onClick={handleFetchHightlights}
+            isDisabled={!textSelections.length}
+          >
+            Generate Shorts
+          </Button>
+          <Button
+            onClick={handleFetchRemove}
             className={classNames(
               'bg-[white]',
               'text-[#848aff]',

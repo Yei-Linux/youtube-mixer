@@ -19,16 +19,35 @@ async def cut_video_by_ranges(video_path: str, rangesConfig : [Range], unique_id
 
 async def remove_parts_from_video(video_path: str, rangesConfig : [Range], unique_id_gen: str):
     general_clip = VideoFileClip(video_path)
-    ranges_to_remove: [Range] = []
+    ranges_got: [Range] = []
     subclips = []
 
     for index, rangeConfig in enumerate(rangesConfig):
-        start = rangesConfig[index].start
-        end = rangesConfig[index].end
-        if index is 0 and start is not 0:
+        start = rangeConfig[index-1].end
+        end = rangeConfig.start
+
+        if index == 0 and start == 0:
+            continue
+        if start == end:
+            continue
+
+        if index == 0 and start != 0:
             start = 0
 
-        subclip = general_clip.subclip(rangeConfig.start,rangeConfig.end)
+        ranges_got.append({start:start,end:end})
+    
+    ranges_got.append({
+        start: rangesConfig[-1].end,
+        end: None
+    })
+
+    for range_got in ranges_got:
+        subclip = None
+        if range_got.end != None:
+            general_clip.subclip(range_got.start,range_got.end)
+        else:
+            general_clip.subclip(range_got.start)
+
         subclips.append(subclip)
 
     final_clip = concatenate_videoclips(subclips)

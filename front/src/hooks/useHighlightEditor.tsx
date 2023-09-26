@@ -5,6 +5,8 @@ export interface ITextSelection {
   positionStartY: number;
   positionEndX: number;
   positionEndY: number;
+  start: number | null;
+  end: number | null;
 }
 
 export type ISelectionOptionsPosition = {
@@ -254,7 +256,8 @@ export const useHighlightEditor = () => {
 
   const handleMouseDownToStartSelection = (
     positionX: number,
-    positionY: number
+    positionY: number,
+    start: number
   ) => {
     setIsTextSelecting(true);
 
@@ -263,12 +266,15 @@ export const useHighlightEditor = () => {
       positionStartY: positionY,
       positionEndX: -1,
       positionEndY: -1,
+      start,
+      end: null,
     });
   };
 
   const handleMouseOverToStartSelection = (
     positionX: number,
-    positionY: number
+    positionY: number,
+    end: number
   ) => {
     if (!isTextSelecting) return;
 
@@ -279,6 +285,7 @@ export const useHighlightEditor = () => {
         ...prev,
         positionEndX: positionX,
         positionEndY: positionY,
+        end,
       };
     });
   };
