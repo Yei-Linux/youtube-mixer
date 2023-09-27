@@ -9,35 +9,21 @@ export interface IRemoveSectionsFromVideosRequest {
   type: 'remove' | 'cut';
 }
 export const removeSectionsFromVideos = async (
-  request: IRemoveSectionsFromVideosRequest
+  request: IRemoveSectionsFromVideosRequest,
+  file: File
 ) => {
   try {
-    const url = `${BASE_PATH_MS_TRANSCRIPT}/api/video-editor`;
+    const url = `${BASE_PATH_MS_TRANSCRIPT}/video-editor`;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('request_str', JSON.stringify(request));
+
     const response = await fetch(url, {
       method: 'POST',
-      body: JSON.stringify(request),
+      body: formData,
     });
-    const reader = response.body?.getReader();
-    if (!reader) throw new Error('Reader is null');
+    const blob = await response.blob();
 
-    const stream = await new ReadableStream({
-      start(controller) {
-        function pump(): any {
-          return reader?.read().then(({ done, value }) => {
-            if (done) {
-              controller.close();
-              return;
-            }
-            controller.enqueue(value);
-            return pump();
-          });
-        }
-
-        return pump();
-      },
-    });
-    const streamResponse = new Response(stream);
-    const blob = await streamResponse.blob();
     return blob;
   } catch (error) {
     throw new Error('API Error: ' + (error as Error).message);
@@ -45,35 +31,22 @@ export const removeSectionsFromVideos = async (
 };
 
 export const highlightsFromVideo = async (
-  request: IRemoveSectionsFromVideosRequest
+  request: IRemoveSectionsFromVideosRequest,
+  file: File
 ) => {
   try {
-    const url = `${BASE_PATH_MS_TRANSCRIPT}/api/video-editor`;
+    const url = `${BASE_PATH_MS_TRANSCRIPT}/video-editor`;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('rangeConfig', JSON.stringify(request.rangeConfig));
+    formData.append('type', JSON.stringify(request.type));
+
     const response = await fetch(url, {
       method: 'POST',
-      body: JSON.stringify(request),
+      body: formData,
     });
-    const reader = response.body?.getReader();
-    if (!reader) throw new Error('Reader is null');
+    const blob = await response.blob();
 
-    const stream = await new ReadableStream({
-      start(controller) {
-        function pump(): any {
-          return reader?.read().then(({ done, value }) => {
-            if (done) {
-              controller.close();
-              return;
-            }
-            controller.enqueue(value);
-            return pump();
-          });
-        }
-
-        return pump();
-      },
-    });
-    const streamResponse = new Response(stream);
-    const blob = await streamResponse.blob();
     return blob;
   } catch (error) {
     throw new Error('API Error: ' + (error as Error).message);

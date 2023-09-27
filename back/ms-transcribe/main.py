@@ -1,8 +1,10 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.background import BackgroundTask
 import uvicorn
 import os
+import json
 
 from helpers.files import save_upload_file,unique_id,remove_file, zip_file
 from helpers.video_manager import transform_video_to_audio, cut_video_by_ranges, remove_parts_from_video
@@ -43,34 +45,34 @@ async def transcribe(file: UploadFile = File(...)):
     return response_transcription
 
 @app.post("/api/video-editor")
-async def video_editor(request: VideoEditorRequest ,file: UploadFile = File(...)):
-    if request.type != 'cut' and request.type != 'remove':
+async def video_editor(request_str = Form(...) ,file: UploadFile = File(...)):
+    request = json.loads(request_str)
+    print(request)
+    if request["type"] != 'cut' and request["type"] != 'remove':
         raise HTTPException(status_code =500, detail = "Type should be either cut or remove")
 
     unique_id_gen = unique_id()
     video = f"{unique_id_gen}.mp4"
+    zip_f = f"{unique_id_gen}.zip"
 
     path_video = os.path.join('files', video)
+    path_zip = os.path.join('files', zip_f)
     save_upload_file(file,path_video)
 
-    rangesConfig = request.rangeConfig
+    rangesConfig = request["rangeConfig"]
     file_names: [str] = []
 
-    if request.type == 'cut':
-       file_names = await cut_video_by_ranges(path_video, rangesConfig, unique_id_gen)
-    if request.type == 'remove':
-       file_names = await remove_parts_from_video(path_video, rangesConfig, unique_id_gen)
+    if request["type"] == 'cut':
+        file_names = await cut_video_by_ranges(path_video, rangesConfig, unique_id_gen)
+        zip_file(file_names, zip_filename= path_zip)
 
-    zip_io_values = zip_file(file_names)
+        for file_path in file_names:
+            remove_file(file_path)
 
-    for file_path in file_names:
-        remove_file(file_path)
-
-    return StreamingResponse(
-        iter([zip_io_values.getvalue()]), 
-        media_type="application/x-zip-compressed", 
-        headers = { "Content-Disposition": f"attachment; filename=videos.zip"}
-    )
+        return FileResponse(path_zip,background=BackgroundTask(remove_file, path_zip))
+    
+    file_name = await remove_parts_from_video(path_video, rangesConfig, unique_id_gen)
+    return FileResponse(file_name,background=BackgroundTask(remove_file, file_name))
 
 if __name__ == '__main__':
     uvicorn.run("main:app",reload=True)

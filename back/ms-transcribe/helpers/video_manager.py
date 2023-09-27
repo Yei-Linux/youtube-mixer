@@ -10,7 +10,7 @@ async def cut_video_by_ranges(video_path: str, rangesConfig : [Range], unique_id
     file_names = []
 
     for index, rangeConfig in enumerate(rangesConfig):
-        subclip = general_clip.subclip(rangeConfig.start,rangeConfig.end)
+        subclip = general_clip.subclip(rangeConfig["start"],rangeConfig["end"])
         file_name = f"zip_files/{unique_id_gen}_cut_{index}.mp4"
         subclip.write_videofile(file_name)
         file_names.append(file_name)
@@ -23,8 +23,8 @@ async def remove_parts_from_video(video_path: str, rangesConfig : [Range], uniqu
     subclips = []
 
     for index, rangeConfig in enumerate(rangesConfig):
-        start = rangeConfig[index-1].end
-        end = rangeConfig.start
+        start = 0 if index == 0 else rangeConfig[index-1]["end"]
+        end = rangeConfig["start"]
 
         if index == 0 and start == 0:
             continue
@@ -34,20 +34,22 @@ async def remove_parts_from_video(video_path: str, rangesConfig : [Range], uniqu
         if index == 0 and start != 0:
             start = 0
 
-        ranges_got.append({start:start,end:end})
+        ranges_got.append({"start":start,"end":end})
     
     ranges_got.append({
-        start: rangesConfig[-1].end,
-        end: None
+        "start": rangesConfig[-1]["end"],
+        "end": None
     })
 
     for range_got in ranges_got:
         subclip = None
-        if range_got.end != None:
-            general_clip.subclip(range_got.start,range_got.end)
+        if range_got["end"] != None:
+            subclip = general_clip.subclip(range_got["start"],range_got["end"])
         else:
-            general_clip.subclip(range_got.start)
-
+            subclip = general_clip.subclip(range_got["start"])
+        if subclip == None:
+            continue
+        
         subclips.append(subclip)
 
     final_clip = concatenate_videoclips(subclips)
@@ -55,4 +57,4 @@ async def remove_parts_from_video(video_path: str, rangesConfig : [Range], uniqu
 
     final_clip.write_videofile(file_name)
 
-    return [file_name]
+    return file_name

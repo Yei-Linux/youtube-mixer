@@ -19,10 +19,7 @@ def unique_id():
 def remove_file(destination: Path): 
     os.remove(destination)
 
-def zip_file(filenames: [str]):
-    zip_io = BytesIO()
-    with zipfile.ZipFile(zip_io, mode='w', compression=zipfile.ZIP_DEFLATED) as temp_zip:
+def zip_file(filenames: [str], zip_filename: str):
+    with zipfile.ZipFile(zip_filename, mode='w') as zip_object:
         for fpath in filenames:
-            temp_zip.write(fpath)
-    
-    return zip_io
+            zip_object.write(fpath)

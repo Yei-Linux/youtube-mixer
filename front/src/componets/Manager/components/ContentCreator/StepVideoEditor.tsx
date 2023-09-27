@@ -63,18 +63,24 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
 
   const handleFetchRemove = async () => {
     const rangeConfig = transformPhrasesToRemove();
-    await handleFetchRemoveVideoSections({
-      rangeConfig,
-      type: 'remove',
-    });
+    await handleFetchRemoveVideoSections(
+      {
+        rangeConfig,
+        type: 'remove',
+      },
+      videoRef
+    );
   };
 
   const handleFetchHightlights = async () => {
     const rangeConfig = transformTextSelections();
-    await handleFetchGenerateHighlights({
-      rangeConfig,
-      type: 'cut',
-    });
+    await handleFetchGenerateHighlights(
+      {
+        rangeConfig,
+        type: 'cut',
+      },
+      videoRef
+    );
   };
 
   return (
@@ -190,7 +196,7 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
             onClick={handleFetchHightlights}
             isDisabled={!textSelections.length}
           >
-            Generate Shorts
+            Download Shorts
           </Button>
           <Button
             onClick={handleFetchRemove}
