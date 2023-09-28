@@ -38,8 +38,7 @@ export const highlightsFromVideo = async (
     const url = `${BASE_PATH_MS_TRANSCRIPT}/video-editor`;
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('rangeConfig', JSON.stringify(request.rangeConfig));
-    formData.append('type', JSON.stringify(request.type));
+    formData.append('request_str', JSON.stringify(request));
 
     const response = await fetch(url, {
       method: 'POST',

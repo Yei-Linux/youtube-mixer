@@ -10,28 +10,32 @@ async def cut_video_by_ranges(video_path: str, rangesConfig : [Range], unique_id
     file_names = []
 
     for index, rangeConfig in enumerate(rangesConfig):
-        subclip = general_clip.subclip(rangeConfig["start"],rangeConfig["end"])
         file_name = f"zip_files/{unique_id_gen}_cut_{index}.mp4"
-        subclip.write_videofile(file_name)
+        temp_file_name = f"zip_files/{unique_id_gen}_cut_{index}.m4a"
+
+        subclip = general_clip.subclip(rangeConfig["start"],rangeConfig["end"])
+        subclip.write_videofile(file_name,temp_audiofile=temp_file_name, remove_temp=True, codec="libx264", audio_codec="aac")
+
         file_names.append(file_name)
 
     return file_names
 
-async def remove_parts_from_video(video_path: str, rangesConfig : [Range], unique_id_gen: str):
-    general_clip = VideoFileClip(video_path)
+def handler_remove(rangesConfig : [Range]):
     ranges_got: [Range] = []
-    subclips = []
+
+    if len(rangesConfig) == 0:
+        return ranges_got
 
     for index, rangeConfig in enumerate(rangesConfig):
-        start = 0 if index == 0 else rangeConfig[index-1]["end"]
+        start = 0 if index == 0 else rangesConfig[index-1]["end"]
         end = rangeConfig["start"]
 
-        if index == 0 and start == 0:
+        if index == 0 and rangeConfig["start"] == 0:
             continue
         if start == end:
             continue
 
-        if index == 0 and start != 0:
+        if index == 0 and rangeConfig["start"] != 0:
             start = 0
 
         ranges_got.append({"start":start,"end":end})
@@ -40,6 +44,14 @@ async def remove_parts_from_video(video_path: str, rangesConfig : [Range], uniqu
         "start": rangesConfig[-1]["end"],
         "end": None
     })
+
+    return ranges_got
+
+async def remove_parts_from_video(video_path: str, rangesConfig : [Range], unique_id_gen: str):
+    ranges_got: [Range] = handler_remove(rangesConfig)
+
+    general_clip = VideoFileClip(video_path)
+    subclips = []
 
     for range_got in ranges_got:
         subclip = None
@@ -53,7 +65,7 @@ async def remove_parts_from_video(video_path: str, rangesConfig : [Range], uniqu
         subclips.append(subclip)
 
     final_clip = concatenate_videoclips(subclips)
-    file_name = f"zip_files/{unique_id_gen}_remove_{index}.mp4"
+    file_name = f"zip_files/{unique_id_gen}_remove.mp4"
 
     final_clip.write_videofile(file_name)
 

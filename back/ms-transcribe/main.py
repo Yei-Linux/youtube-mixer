@@ -66,12 +66,15 @@ async def video_editor(request_str = Form(...) ,file: UploadFile = File(...)):
         file_names = await cut_video_by_ranges(path_video, rangesConfig, unique_id_gen)
         zip_file(file_names, zip_filename= path_zip)
 
+        remove_file(path_video)
         for file_path in file_names:
             remove_file(file_path)
 
         return FileResponse(path_zip,background=BackgroundTask(remove_file, path_zip))
     
     file_name = await remove_parts_from_video(path_video, rangesConfig, unique_id_gen)
+    remove_file(path_video)
+    
     return FileResponse(file_name,background=BackgroundTask(remove_file, file_name))
 
 if __name__ == '__main__':
