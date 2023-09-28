@@ -1,5 +1,5 @@
 import { useYtVideoStore } from '@/store';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import styles from './contentcreator.module.css';
 import classNames from 'classnames';
 import { Word } from './Word';
@@ -10,20 +10,36 @@ import { Button } from '@/componets/ui/Button';
 import { useRemoveVideoSections } from '@/hooks/useRemoveVideoSections';
 import { IRangeConfig } from '@/services';
 import { useGenerateHighlights } from '@/hooks';
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  Switch,
+  useDisclosure,
+} from '@nextui-org/react';
 
 export interface IVideoEditor {
   video: File;
+  onReturnToLoadNewVideo: () => void;
 }
 
-export const VideEditor: FC<IVideoEditor> = ({ video }) => {
+export const VideEditor: FC<IVideoEditor> = ({
+  video,
+  onReturnToLoadNewVideo,
+}) => {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isSelectedShowRemovePhrases, setIsSelectedShowRemovePhrases] =
+    useState(true);
   const transcription = useYtVideoStore((store) => store.transcription);
   const { videoRef } = useVideoEditor({ video });
   const {
+    updateTextSelections,
     textRemovedOptionsPosition,
     textSelectionOptionsPosition,
     isOnHighlightRange,
     isOnSelectionRange,
     isOnRemovePhraseRange,
+    isOnRange,
     handleMouseDownToStartSelection,
     handleMouseOverToStartSelection,
     isVisibleSelectionOptionsPosition,
@@ -36,6 +52,8 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
     phraseRemoved,
     handleShowTooltipForRemoved,
     handleRemoveFromTextRemoved,
+    handleOnDownloadVideoRemoved,
+    textToHide,
   } = useHighlightEditor();
 
   const { handleFetchRemoveVideoSections } = useRemoveVideoSections();
@@ -68,7 +86,9 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
         rangeConfig,
         type: 'remove',
       },
-      videoRef
+      videoRef,
+      video,
+      handleOnDownloadVideoRemoved
     );
   };
 
@@ -79,17 +99,109 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
         rangeConfig,
         type: 'cut',
       },
-      videoRef
+      videoRef,
+      () => updateTextSelections([])
     );
   };
 
   return (
     <div
       className={classNames(
-        'flex justify-between gap-3 w-full',
+        'flex flex-col md:flex-row-reverse gap-3 w-full',
         styles.content_creator_section
       )}
     >
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                <div className="flex flex-col gap-3 p-4">
+                  <p>
+                    Are you sure do you want to abandon your video edition
+                    session?
+                  </p>
+                  <div className="w-full flex justify-end gap-3">
+                    <Button
+                      className={classNames(
+                        'bg-[white]',
+                        '!text-[#848aff]',
+                        'border border-[#848aff]'
+                      )}
+                      onClick={() => {
+                        onClose();
+                        onReturnToLoadNewVideo();
+                      }}
+                    >
+                      Yes 🥶
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        onClose();
+                      }}
+                    >
+                      No 😎
+                    </Button>
+                  </div>
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <div className={classNames('min-w-[50%]')}>
+        <div className="flex flex-col gap-3">
+          <div className="w-full flex justify-end">
+            <span
+              className="text-sm font-bold text-primary underline cursor-pointer"
+              onClick={() => onOpen()}
+            >
+              Return to Load new Video {'->'}
+            </span>
+          </div>
+          <video controls className="w-full" ref={videoRef} id="video" />
+          <div className="flex justify-between">
+            <p className="text-sm">
+              Video Duration: <strong></strong>
+            </p>
+            <Switch
+              isSelected={isSelectedShowRemovePhrases}
+              onValueChange={setIsSelectedShowRemovePhrases}
+            >
+              <span className="text-sm">Show Phrases Removed</span>
+            </Switch>
+          </div>
+        </div>
+        <div className="p-4 flex flex-col gap-4">
+          <p className="text-center text-md">
+            You removed <strong>{phraseRemoved?.length ?? 0} phrases </strong>
+            from this video
+          </p>
+          <p className="text-center text-md">
+            You have marked{' '}
+            <strong>{textSelections?.length ?? 0} Highlights</strong> from this
+            video
+          </p>
+          <Button
+            onClick={handleFetchHightlights}
+            isDisabled={!textSelections.length}
+          >
+            Download Shorts
+          </Button>
+          <Button
+            onClick={handleFetchRemove}
+            className={classNames(
+              'bg-[white]',
+              '!text-[#848aff]',
+              'border border-[#848aff]'
+            )}
+            isDisabled={!phraseRemoved.length}
+          >
+            Remove Phrases
+          </Button>
+        </div>
+      </div>
       <div className={classNames('min-w-[50%]')}>
         <h4 className="font-bold mb-4">Video Transcription:</h4>
         <div
@@ -143,6 +255,9 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
                   'bg-primary-200': isOnHighlightRange(indexParent, index),
                   'bg-indigo-300': isOnSelectionRange(indexParent, index),
                   'bg-red-300': isOnRemovePhraseRange(indexParent, index),
+                  hidden:
+                    !isSelectedShowRemovePhrases &&
+                    isOnRange(indexParent, index, textToHide),
                 })}
                 onClick={() => {
                   const isTextSelected = isOnSelectionRange(indexParent, index);
@@ -173,42 +288,6 @@ export const VideEditor: FC<IVideoEditor> = ({ video }) => {
               />
             ))
           )}
-        </div>
-      </div>
-      <div className={classNames('min-w-[50%]')}>
-        <div className="flex flex-col gap-3">
-          <video controls className="w-full" ref={videoRef} id="video" />
-          <p className="text-sm">
-            Video Duration: <strong></strong>
-          </p>
-        </div>
-        <div className="p-4 flex flex-col gap-4">
-          <p className="text-center text-md">
-            You removed <strong>{phraseRemoved?.length ?? 0} phrases </strong>
-            from this video
-          </p>
-          <p className="text-center text-md">
-            You have marked{' '}
-            <strong>{textSelections?.length ?? 0} Highlights</strong> from this
-            video
-          </p>
-          <Button
-            onClick={handleFetchHightlights}
-            isDisabled={!textSelections.length}
-          >
-            Download Shorts
-          </Button>
-          <Button
-            onClick={handleFetchRemove}
-            className={classNames(
-              'bg-[white]',
-              'text-[#848aff]',
-              'border border-[#848aff]'
-            )}
-            isDisabled={!phraseRemoved.length}
-          >
-            Remove Prhases
-          </Button>
         </div>
       </div>
     </div>

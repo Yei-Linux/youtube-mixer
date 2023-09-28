@@ -29,8 +29,13 @@ export const useHighlightEditor = () => {
   const [currentTextSelection, setCurrentTextSelection] =
     useState<ITextSelection | null>(null);
 
+  const [textToHide, setTextToHide] = useState<ITextSelection[]>([]);
   const [phraseRemoved, setPhraseWordsRemoved] = useState<ITextSelection[]>([]);
   const [textSelections, setTextSelections] = useState<ITextSelection[]>([]);
+
+  const updateTextSelections = (newValue: ITextSelection[]) => {
+    setTextSelections(newValue);
+  };
 
   const isVisibleSelectionOptionsPosition = useMemo(
     () =>
@@ -191,7 +196,7 @@ export const useHighlightEditor = () => {
       !isClickedInsideRemoved &&
       textRemovedOptionsPosition
     );
-    validationTextRemovedOptions && setTextSelectionOptionsPosition(null);
+    validationTextRemovedOptions && setTextRemovedOptionsPosition(null);
 
     const positions = handleGetPositionsSelectionOptions(currentTextSelection);
     if (!positions) {
@@ -209,6 +214,7 @@ export const useHighlightEditor = () => {
     currentTextSelection,
     selectionOptionsPosition,
     textSelectionOptionsPosition,
+    textRemovedOptionsPosition,
   ]);
 
   const conditionRange = (
@@ -254,6 +260,14 @@ export const useHighlightEditor = () => {
     [phraseRemoved]
   );
 
+  const isOnRange = (
+    indexParent: number,
+    index: number,
+    texts: ITextSelection[]
+  ) => {
+    return texts.some((item) => conditionRange(item, indexParent, index));
+  };
+
   const handleMouseDownToStartSelection = (
     positionX: number,
     positionY: number,
@@ -290,7 +304,12 @@ export const useHighlightEditor = () => {
     });
   };
 
+  const handleOnDownloadVideoRemoved = () => {
+    setTextToHide(phraseRemoved);
+  };
+
   return {
+    updateTextSelections,
     textRemovedOptionsPosition,
     textSelectionOptionsPosition,
     isOnHighlightRange,
@@ -308,5 +327,8 @@ export const useHighlightEditor = () => {
     phraseRemoved,
     handleShowTooltipForRemoved,
     handleRemoveFromTextRemoved,
+    textToHide,
+    handleOnDownloadVideoRemoved,
+    isOnRange,
   };
 };

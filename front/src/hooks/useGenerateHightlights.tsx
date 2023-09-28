@@ -8,7 +8,8 @@ import { MutableRefObject } from 'react';
 export const useGenerateHighlights = () => {
   const handleFetchGenerateHighlights = async (
     req: IRemoveSectionsFromVideosRequest,
-    videoRef: MutableRefObject<HTMLVideoElement | null>
+    videoRef: MutableRefObject<HTMLVideoElement | null>,
+    onSuccess: () => void
   ) => {
     if (!videoRef.current?.src) return;
 
@@ -21,6 +22,7 @@ export const useGenerateHighlights = () => {
       const blobRes = new Blob([response]);
 
       downloadFile(blobRes, 'zip');
+      onSuccess();
     } catch (error) {}
   };
 

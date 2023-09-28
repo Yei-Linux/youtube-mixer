@@ -40,7 +40,13 @@ export const ContentCreator = () => {
         />
       )}
       {step === 'editor' && !!files.length && (
-        <VideEditor video={files[0].file} />
+        <VideEditor
+          video={files[0].file}
+          onReturnToLoadNewVideo={() => {
+            setStep('drag');
+            setFiles([]);
+          }}
+        />
       )}
     </div>
   );

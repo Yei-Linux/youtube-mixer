@@ -1,5 +1,6 @@
 import { Button } from '@/componets/ui/Button';
 import { ProgressBar } from '@/componets/ui/ProgressBar';
+import { Spinner } from '@nextui-org/react';
 import { FC } from 'react';
 
 export interface IStepLoadVideo {
@@ -19,9 +20,9 @@ export const StepLoadVideo: FC<IStepLoadVideo> = ({
         </div>
       )}
       {isProcessing && (
-        <div className="flex flex-col gap-3">
-          <p>Reading File:</p>
-          <ProgressBar percent={30} />
+        <div className="flex items-center flex-col gap-3">
+          <Spinner color="primary" />
+          <p>Reading File ... This process can take a few minutes</p>
         </div>
       )}
     </div>
