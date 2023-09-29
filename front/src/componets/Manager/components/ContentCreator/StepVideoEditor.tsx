@@ -162,9 +162,6 @@ export const VideEditor: FC<IVideoEditor> = ({
           </div>
           <video controls className="w-full" ref={videoRef} id="video" />
           <div className="flex justify-between">
-            <p className="text-sm">
-              Video Duration: <strong></strong>
-            </p>
             <Switch
               isSelected={isSelectedShowRemovePhrases}
               onValueChange={setIsSelectedShowRemovePhrases}
@@ -174,11 +171,11 @@ export const VideEditor: FC<IVideoEditor> = ({
           </div>
         </div>
         <div className="p-4 flex flex-col gap-4">
-          <p className="text-center text-md">
+          <p className="text-center text-sm md:text-md">
             You removed <strong>{phraseRemoved?.length ?? 0} phrases </strong>
             from this video
           </p>
-          <p className="text-center text-md">
+          <p className="text-center text-sm md:text-md">
             You have marked{' '}
             <strong>{textSelections?.length ?? 0} Highlights</strong> from this
             video

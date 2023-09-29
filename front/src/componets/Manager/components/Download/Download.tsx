@@ -10,12 +10,17 @@ export const Download = () => {
     <div className="flex flex-col gap-7">
       <div>
         <Select
+          label="Types"
           value={extension}
           onChange={(e) => setExtension(e.target.value as TExtension)}
         >
-          <Select.Option value="mp4">MP4</Select.Option>
-          <Select.Option value="mp3">MP3</Select.Option>
-          <Select.Option value="mp4WithoutAudio">
+          <Select.Option key="mp4" value="mp4">
+            MP4
+          </Select.Option>
+          <Select.Option key="mp3" value="mp3">
+            MP3
+          </Select.Option>
+          <Select.Option key="mp4WithoutAudio" value="mp4WithoutAudio">
             MP4 Without Audio
           </Select.Option>
         </Select>

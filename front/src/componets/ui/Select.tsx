@@ -1,30 +1,37 @@
 import { ChangeEvent, FC } from 'react';
+import { Select as NextUISelect, SelectItem } from '@nextui-org/react';
 
 export interface ISelect {
   value: string;
-  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
-  children: React.ReactNode;
+  onChange: (e: any) => void;
+  children: any;
+  label?: string;
 }
 
 interface IOption {
   value: string;
-  children: React.ReactNode;
+  children: any;
 }
 const Option = ({ children, value }: IOption) => (
-  <option value={value}>{children}</option>
+  <SelectItem key={value} value={value}>
+    {children}
+  </SelectItem>
 );
 
-export const Select = ({ value, onChange, children }: ISelect) => {
+export const Select = ({ value, onChange, children, label = '' }: ISelect) => {
   return (
-    <select
-      value={value}
+    <NextUISelect
+      variant="flat"
+      color="default"
+      size="sm"
+      selectedKeys={new Set([value])}
       onChange={onChange}
-      id="countries"
+      label={label}
       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg outline-0 block w-full p-2.5"
     >
       {children}
-    </select>
+    </NextUISelect>
   );
 };
 
-Select.Option = Option;
+Select.Option = SelectItem;

@@ -19,14 +19,6 @@ export const ManagerSingleVideo = () => {
               headerContent: <h3 className="text-md">Download Now</h3>,
               bodyContent: <Download />,
             },
-            {
-              headerContent: <h3 className="text-md">Create Summary</h3>,
-              bodyContent: <Download />,
-            },
-            {
-              headerContent: <h3 className="text-md">Create Reel</h3>,
-              bodyContent: <Download />,
-            },
           ]}
         />
       )}

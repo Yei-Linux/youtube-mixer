@@ -34,10 +34,13 @@ export const List: FC<IList> = ({}) => {
     <div className="flex flex-col gap-7">
       <div className="mb-3">
         <Select
+          label="Types"
           value={extension}
           onChange={(e) => setExtension(e.target.value as TExtension)}
         >
-          <Select.Option value="mp3">MP3</Select.Option>
+          <Select.Option key="mp3" value="mp3">
+            MP3
+          </Select.Option>
         </Select>
       </div>
 
