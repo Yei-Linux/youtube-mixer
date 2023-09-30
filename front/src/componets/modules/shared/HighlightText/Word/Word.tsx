@@ -1,9 +1,8 @@
-import { IWord } from '@/types/transcription';
 import classNames from 'classnames';
 import { FC } from 'react';
 
 export interface IWordComponent {
-  word: IWord;
+  wordContent: string;
   id: string;
   className?: string;
   onMouseOver?: () => void;
@@ -13,7 +12,7 @@ export interface IWordComponent {
 
 export const Word: FC<IWordComponent> = ({
   id,
-  word,
+  wordContent,
   onMouseDown,
   onMouseOver,
   onClick,
@@ -30,7 +29,7 @@ export const Word: FC<IWordComponent> = ({
       onMouseOver={onMouseOver}
       onClick={onClick}
     >
-      {word.text}
+      {wordContent}
     </span>
   );
 };
