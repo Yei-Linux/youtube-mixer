@@ -1,4 +1,4 @@
-import { IPLayListVideo } from '@/componets/Manager/components/Playlist/List';
+import { IPLayListVideo } from '@/componets/modules/YouMixDownload/Playlist/List';
 import { mixPlayList } from '@/services/playlist-mix';
 import { useYtVideoStore } from '@/store';
 import { downloadFile } from '@/utils';

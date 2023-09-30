@@ -2,7 +2,7 @@ import { Socket } from 'socket.io-client';
 import { IMetaVideoInfo } from '../types/conversion';
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
-import { IPLayListVideo } from '@/componets/Manager/components/Playlist/List';
+import { IPLayListVideo } from '@/componets/modules/YouMixDownload/Playlist/List';
 import { ITranscriptionDataResponse } from '@/types/transcription';
 
 export const placeholderMultipleVideo = [

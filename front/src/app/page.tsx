@@ -1,6 +1,6 @@
 'use client';
 
-import { Home } from '@/componets/Home/Home';
+import { Home } from '@/componets/templates/Home/Home';
 
 export default function Index() {
   return <Home />;

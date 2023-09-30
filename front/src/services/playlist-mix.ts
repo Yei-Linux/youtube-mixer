@@ -1,4 +1,4 @@
-import { IPLayListVideo } from '@/componets/Manager/components/Playlist/List';
+import { IPLayListVideo } from '@/componets/modules/YouMixDownload/Playlist/List';
 import { BASE_PATH_EXPRESS } from '@/helpers/data';
 
 interface IYtPlaylistparams {
