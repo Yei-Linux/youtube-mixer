@@ -7,6 +7,7 @@ export interface IWordComponent {
   className?: string;
   onMouseOver?: () => void;
   onMouseDown?: () => void;
+  onMouseUp?: () => void;
   onClick?: () => void;
 }
 
@@ -15,6 +16,7 @@ export const Word: FC<IWordComponent> = ({
   wordContent,
   onMouseDown,
   onMouseOver,
+  onMouseUp,
   onClick,
   className,
 }) => {
@@ -27,6 +29,7 @@ export const Word: FC<IWordComponent> = ({
       className={classNames('pr-2', className)}
       onMouseDown={onMouseDown}
       onMouseOver={onMouseOver}
+      onMouseUp={onMouseUp}
       onClick={onClick}
     >
       {wordContent}

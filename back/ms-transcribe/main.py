@@ -36,18 +36,16 @@ async def transcribe(file: UploadFile = File(...)):
     save_upload_file(file,path_video)
 
     await transform_video_to_audio(path_target=path_video,path_dest=path_audio)
-    #transcription_timestamp = await transcribe_audio_to_text_timestamp(path_audio)
+    transcription_timestamp = await transcribe_audio_to_text_timestamp(path_audio)
 
     remove_file(path_video)
     remove_file(path_audio)
 
-    #return {"data": transcription_timestamp, "statusText": "OK"}
-    return response_transcription
+    return {"data": transcription_timestamp, "statusText": "OK"}
 
 @app.post("/api/video-editor")
 async def video_editor(request_str = Form(...) ,file: UploadFile = File(...)):
     request = json.loads(request_str)
-    print(request)
     if request["type"] != 'cut' and request["type"] != 'remove':
         raise HTTPException(status_code =500, detail = "Type should be either cut or remove")
 
@@ -60,6 +58,8 @@ async def video_editor(request_str = Form(...) ,file: UploadFile = File(...)):
     save_upload_file(file,path_video)
 
     rangesConfig = request["rangeConfig"]
+    rangesConfig.sort(key=lambda x: x["start"], reverse=False)
+
     file_names: [str] = []
 
     if request["type"] == 'cut':

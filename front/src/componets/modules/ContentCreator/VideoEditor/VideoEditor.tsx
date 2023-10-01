@@ -7,6 +7,7 @@ import styles from './contentcreator.module.css';
 import { useFeaturesHighlights } from '../../shared/HighlightText/useFeaturesHighlights';
 import { VideoViewer } from './VideoViewer';
 import { VideoTranscription } from './VideoTranscription/VideoTranscription';
+import { useIndexWordsRemoved } from './useIndexWordsRemoved';
 
 export interface IVideoEditor {
   video: File;
@@ -19,6 +20,7 @@ export const VideEditor: FC<IVideoEditor> = ({
 }) => {
   const [isSelectedShowTextVideoToRemove, setIsSelectedShowTextVideoToRemove] =
     useState(true);
+  const { indexWordsRemoved, updateIndexWordsRemoved } = useIndexWordsRemoved();
   const transcription = useYtVideoStore((store) => store.transcription);
 
   const initialFeaturesState = {
@@ -50,11 +52,16 @@ export const VideEditor: FC<IVideoEditor> = ({
         setIsSelectedShowTextVideoToRemove={setIsSelectedShowTextVideoToRemove}
         textVideoToRemove={features['textVideoToRemove']}
         textVideoToMark={features['textVideoToMark']}
+        indexWordsRemoved={indexWordsRemoved}
+        updateIndexWordsRemoved={updateIndexWordsRemoved}
+        set={set}
       />
       <VideoTranscription
         textChainning={textChainning}
         features={features}
         set={set}
+        indexWordsRemoved={indexWordsRemoved}
+        isSelectedShowTextVideoToRemove={isSelectedShowTextVideoToRemove}
       />
     </div>
   );

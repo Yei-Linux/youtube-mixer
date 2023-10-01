@@ -8,6 +8,7 @@ import {
   tooltipContentsVariation,
 } from './constants';
 import { THandleOpenTooltipOnHighlight } from '@/componets/modules/shared/HighlightText/TooltipOptions/useTooltipOptions';
+import { TIndexWordsRemoved } from '../useIndexWordsRemoved';
 
 export type THighlightTypes =
   | 'current'
@@ -21,11 +22,15 @@ export interface IVideoTranscription {
   textChainning: string[];
   features: Record<string, ITextHighlight[]>;
   set: ({ key, payload, type }: ISetter) => void;
+  indexWordsRemoved: TIndexWordsRemoved;
+  isSelectedShowTextVideoToRemove: boolean;
 }
 export const VideoTranscription: FC<IVideoTranscription> = ({
   textChainning,
   features,
   set,
+  indexWordsRemoved,
+  isSelectedShowTextVideoToRemove,
 }) => {
   const [currentHightlightType, setCurrentHightlightType] =
     useState<ICurrentHightlightType>(DEFAULT_HIGHLIGHT_TYPE_VALUE);
@@ -63,6 +68,8 @@ export const VideoTranscription: FC<IVideoTranscription> = ({
               ...props,
               set,
               setCurrentHightlightType,
+              features,
+              currentHightlightType,
             })[currentHightlightType.type]
           }
         >
@@ -73,6 +80,8 @@ export const VideoTranscription: FC<IVideoTranscription> = ({
             isSomeOnRange,
             handleMouseDownOnHighlight,
             handleMouseOverOnHighlight,
+            handleStopHighlight,
+            handleContinueHighlight,
             currentTextHighlight,
             handleOpenTooltip,
             closeTooltip,
@@ -90,6 +99,8 @@ export const VideoTranscription: FC<IVideoTranscription> = ({
             const isTextVideoToRemove =
               features['textVideoToRemove'] &&
               isSomeOnRange(features['textVideoToRemove'], index);
+            const isTextVideoRemoved =
+              indexWordsRemoved && isSomeOnRange(indexWordsRemoved, index);
 
             return (
               <HightlightText.Word
@@ -99,7 +110,9 @@ export const VideoTranscription: FC<IVideoTranscription> = ({
                 className={classNames({
                   'bg-primary-200': isCurrentHighlight,
                   'bg-indigo-300': isTextVideoToMark,
-                  'bg-red-300': isTextVideoToRemove,
+                  'bg-red-300': isTextVideoRemoved || isTextVideoToRemove,
+                  hidden:
+                    !isSelectedShowTextVideoToRemove && isTextVideoRemoved,
 
                   'highlihttype-current': isCurrentHighlight,
                   'highlihttype-textVideoToMark': isTextVideoToMark,
@@ -117,7 +130,13 @@ export const VideoTranscription: FC<IVideoTranscription> = ({
                   closeTooltip();
                   handleMouseDownOnHighlight(index);
                 }}
-                onMouseOver={() => handleMouseOverOnHighlight(index)}
+                onMouseOver={() => {
+                  handleMouseOverOnHighlight(index);
+                }}
+                onMouseUp={() => {
+                  if (isTextVideoToMark || isTextVideoToRemove) return;
+                  setCurrentHightlightType(DEFAULT_HIGHLIGHT_TYPE_VALUE);
+                }}
               />
             );
           }}

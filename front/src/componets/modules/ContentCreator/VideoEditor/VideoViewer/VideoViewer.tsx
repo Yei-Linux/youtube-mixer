@@ -9,6 +9,11 @@ import { useRemoveVideoSections } from '@/componets/modules/ContentCreator/Video
 import { useGenerateHighlights } from '@/hooks';
 import { IWord } from '@/types/transcription';
 import { IRangeConfig } from '@/services';
+import { ISetter } from '@/componets/modules/shared/HighlightText/useFeaturesHighlights';
+import {
+  TIndexWordsRemoved,
+  TUpdateIndexWordsRemoved,
+} from '../useIndexWordsRemoved';
 
 export interface IVideoViewer {
   video: File;
@@ -18,6 +23,9 @@ export interface IVideoViewer {
   setIsSelectedShowTextVideoToRemove: (prop: boolean) => void;
   textVideoToRemove: ITextHighlight[];
   textVideoToMark: ITextHighlight[];
+  set: ({ key, payload, type }: ISetter) => void;
+  indexWordsRemoved: TIndexWordsRemoved;
+  updateIndexWordsRemoved: TUpdateIndexWordsRemoved;
 }
 export const VideoViewer: FC<IVideoViewer> = ({
   video,
@@ -27,6 +35,9 @@ export const VideoViewer: FC<IVideoViewer> = ({
   setIsSelectedShowTextVideoToRemove,
   textVideoToRemove,
   textVideoToMark,
+  set,
+  indexWordsRemoved,
+  updateIndexWordsRemoved,
 }) => {
   const { videoRef } = useVideoViewer({ video });
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -36,9 +47,10 @@ export const VideoViewer: FC<IVideoViewer> = ({
 
   const transform = (texts: ITextHighlight[]): IRangeConfig[] => {
     const transcriptionGenerated = texts
-      .map(({ positionStart, positionEnd }) =>
-        transcriptionChainning.slice(positionStart, positionEnd)
-      )
+      .map(({ positionStart, positionEnd }) => ({
+        start: transcriptionChainning[positionStart].start,
+        end: transcriptionChainning[positionEnd].end,
+      }))
       .flat()
       .map(({ start, end }) => ({ start, end }))
       .filter(({ start, end }) => start != null && end != null);
@@ -47,7 +59,9 @@ export const VideoViewer: FC<IVideoViewer> = ({
   };
 
   const handleFetchRemove = async () => {
-    const rangeConfig = transform(textVideoToRemove);
+    const merged = [...indexWordsRemoved, ...textVideoToRemove];
+    const rangeConfig = transform(merged);
+
     await handleFetchRemoveVideoSections(
       {
         rangeConfig,
@@ -55,7 +69,14 @@ export const VideoViewer: FC<IVideoViewer> = ({
       },
       videoRef,
       video,
-      () => {}
+      () => {
+        updateIndexWordsRemoved(merged.slice());
+        set({
+          type: 'RESET',
+          payload: [],
+          key: 'textVideoToRemove',
+        });
+      }
     );
   };
 
@@ -67,7 +88,12 @@ export const VideoViewer: FC<IVideoViewer> = ({
         type: 'cut',
       },
       videoRef,
-      () => {}
+      () =>
+        set({
+          type: 'RESET',
+          payload: [],
+          key: 'textVideoToMark',
+        })
     );
   };
 

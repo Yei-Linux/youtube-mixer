@@ -9,7 +9,6 @@ import {
 import {
   createFoldersInCaseNotExistsOnPath,
   removeFileProcessed,
-  removeFilesProcessed,
   removeFolderProcessed,
 } from '../helpers/data';
 import { v4 as uuid } from 'uuid';

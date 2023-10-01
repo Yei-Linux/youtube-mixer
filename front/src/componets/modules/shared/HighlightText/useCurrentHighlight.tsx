@@ -12,6 +12,10 @@ export const useCurrentHighlight = () => {
   const updateTextHightlight = (value: ITextHighlight | null) =>
     setCurrentTextHighlight(value);
 
+  const handleContinueHighlight = () => setIsTextHighlight(true);
+
+  const handleStopHighlight = () => setIsTextHighlight(false);
+
   const handleMouseDownOnHighlight: THandlerMouseDownOnHighlight = (
     position: number
   ) => {
@@ -41,6 +45,8 @@ export const useCurrentHighlight = () => {
   return {
     handleMouseDownOnHighlight,
     handleMouseOverOnHighlight,
+    handleContinueHighlight,
+    handleStopHighlight,
     currentTextHighlight,
     isTextHighlight,
     updateTextHightlight,

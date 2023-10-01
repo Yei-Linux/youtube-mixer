@@ -33,6 +33,8 @@ export interface IRenderTooltip {
 interface IChild {
   isOnRange: TIsOnRange;
   isSomeOnRange: TIsOnSomeRange;
+  handleContinueHighlight: () => void;
+  handleStopHighlight: () => void;
   handleMouseDownOnHighlight: THandlerMouseDownOnHighlight;
   handleMouseOverOnHighlight: THandlerMouseOverOnHighlight;
   word: string;
@@ -55,6 +57,8 @@ export const HightlightText = ({
   const {
     updateTextHightlight,
     updateIsTextHightlight,
+    handleStopHighlight,
+    handleContinueHighlight,
     handleMouseDownOnHighlight,
     handleMouseOverOnHighlight,
     currentTextHighlight,
@@ -102,6 +106,8 @@ export const HightlightText = ({
           isSomeOnRange,
           handleMouseDownOnHighlight,
           handleMouseOverOnHighlight,
+          handleContinueHighlight,
+          handleStopHighlight,
           word,
           index,
           currentTextHighlight,

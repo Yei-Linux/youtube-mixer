@@ -7,7 +7,6 @@ import Miniget from 'miniget';
 import { parseYTSourceText } from './parse';
 import { IPlayList } from '../types/playlist';
 import path from 'path';
-import { HttpsProxyAgent } from 'https-proxy-agent';
 import { UPLOAD_PROGRESS_STEPONE_MIX } from '../constants/socket';
 
 export const getPlaylistYtbStream = async (
