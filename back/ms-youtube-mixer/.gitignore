@@ -33,3 +33,4 @@ next-env.d.ts
 
 *.mp4
 *.mp3
+.env

@@ -3,6 +3,8 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.background import BackgroundTask
 import uvicorn
+
+from dotenv import load_dotenv
 import os
 import json
 
@@ -13,6 +15,7 @@ from mocks.response_transcription_mock import response_transcription
 
 from models.video_editor import VideoEditorRequest
 
+load_dotenv()
 app = FastAPI()
 
 origins = ["*"]
@@ -78,4 +81,4 @@ async def video_editor(request_str = Form(...) ,file: UploadFile = File(...)):
     return FileResponse(file_name,background=BackgroundTask(remove_file, file_name))
 
 if __name__ == '__main__':
-    uvicorn.run("main:app",reload=True)
+    uvicorn.run("main:app",reload=True, port= os.environ['MS_TRANSCRIBE_PORT'])

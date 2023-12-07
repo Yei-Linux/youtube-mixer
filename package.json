@@ -1,0 +1,21 @@
+{
+  "name": "youtube-mixer",
+  "version": "1.0.0",
+  "scripts": {
+    "front:dev": "cd front && npm run dev",
+    "back:mixer:dev": "cd back/ms-youtube-mixer && npm run dev",
+    "back:transcribe:dev": "cd back/ms-youtube-transcribe && pip3 ./app/main.py",
+    "back:transcribe:reqs": "cd back/ms-transcribe && pip3 freeze > requirements.txt",
+    "docker:compose-up": "MS_YT_MIXER_PORT=3001 MS_TRANSCRIBE_PORT=8081 docker-compose up -d"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yei-Linux/youtube-mixer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yei-Linux/youtube-mixer/issues"
+  },
+  "homepage": "https://github.com/Yei-Linux/youtube-mixer#readme"
+}

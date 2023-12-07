@@ -25,7 +25,7 @@ app.use(
   })
 );
 
-const PORT = 3001;
+const PORT = process.env['MS_YT_MIXER_PORT'] || 3001;
 const sockets: any = {};
 
 app.post('/api/youtube-download', ytDownloader);
