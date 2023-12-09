@@ -13,3 +13,12 @@
 - You will need to upload a video and this video generate a transcription, then you could interact with it.
 
 - If you want you could highlight the best part of the video and generate a short with the highlight!
+
+# Setup
+
+- Please run these following commands:
+
+```console
+  npm run front:dev
+  npm run docker:compose-up
+```
