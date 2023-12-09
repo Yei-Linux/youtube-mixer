@@ -5,21 +5,21 @@ services:
       - ./back/ms-youtube-mixer/.env
     container_name: ms-youtube-mixer
     build:
-      dockerfile: ./back/ms-youtube-mixer/Dockerfile
+      context: ./back/ms-youtube-mixer
+      dockerfile: Dockerfile
     ports:
       - ${MS_YT_MIXER_PORT}:${MS_YT_MIXER_PORT}
     volumes:
       - .:/usr/src/app
-    restart: always
 
   ms-transcribe:
     env_file:
       - ./back/ms-transcribe/.env
     container_name: ms-transcribe
     build:
-      dockerfile: ./back/ms-transcribe/Dockerfile
+      context: ./back/ms-transcribe
+      dockerfile: Dockerfile
     ports:
       - ${MS_TRANSCRIBE_PORT}:${MS_TRANSCRIBE_PORT}
     volumes:
       - .:/usr/src/app
-    restart: always

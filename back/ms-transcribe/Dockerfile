@@ -1,9 +1,9 @@
 FROM python:3.11
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/back/ms-transcribe
 
-COPY ["./back/ms-transcribe/requirements.txt", "./"]
-COPY ./back/ms-transcribe/app ./app
+COPY ["requirements.txt", "./"]
+COPY ./app ./app
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-#CMD python ./app/main.py
+RUN pip install -r requirements.txt
+CMD python ./app/main.py

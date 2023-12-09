@@ -6,7 +6,7 @@
     "back:mixer:dev": "cd back/ms-youtube-mixer && npm run dev",
     "back:transcribe:dev": "cd back/ms-youtube-transcribe && pip3 ./app/main.py",
     "back:transcribe:reqs": "cd back/ms-transcribe && pip3 freeze > requirements.txt",
-    "docker:compose-up": "MS_YT_MIXER_PORT=3001 MS_TRANSCRIBE_PORT=8081 docker-compose up -d"
+    "docker:compose-up": "MS_YT_MIXER_PORT=3001 MS_TRANSCRIBE_PORT=8081 docker-compose up --build"
   },
   "repository": {
     "type": "git",

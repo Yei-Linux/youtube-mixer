@@ -1,9 +1,9 @@
 FROM node:16-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/back/ms-youtube-mixer
 
-COPY ["./back/ms-youtube-mixer/package.json", "./back/ms-youtube-mixer/tsconfig.json", "./back/ms-youtube-mixer/.env", "./"]
-COPY ./back/ms-youtube-mixer/src ./src
+COPY ["package.json", "tsconfig.json", ".env", "./"]
+COPY ./src ./src
 
 RUN npm install
-#CMD npm run dev
+CMD npm run dev
