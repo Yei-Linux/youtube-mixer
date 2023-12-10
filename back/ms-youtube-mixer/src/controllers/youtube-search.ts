@@ -13,7 +13,7 @@ export const ytSearch = async (req: Request, res: Response) => {
   })}`;
 
   try {
-    if (!ybVideoUrl) throw new Error('Youtube Video Url was not passed.');
+    if (!videoId) throw new Error('Youtube Video Url was not passed.');
 
     const ytVideoInfo = await getYtInfo(ybVideoUrl);
 
@@ -42,7 +42,7 @@ export const ytSearch = async (req: Request, res: Response) => {
   } catch (error) {
     console.log('search endpoint error:', (error as Error).message);
     res.status(500).send({
-      error,
+      error: (error as Error).message,
     });
   }
 };

@@ -84,7 +84,6 @@ export const getYtInfo = async (ytUrl: string) => {
     const response = await ytdl.getInfo(ytUrl, {});
     return response;
   } catch (error) {
-    console.log('test???', error);
     throw new Error('Error');
   }
 };

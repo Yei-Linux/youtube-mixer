@@ -10,15 +10,40 @@ import { UPLOAD_PROGRESS_STEPONE_SINGLE } from '../constants/socket';
 export const ytDownloader = async (req: Request, res: Response) => {
   const userId = req.headers?.userid as string;
   const operationId = req.headers?.operationid as string;
+  if (!userId || !operationId) {
+    res.status(500).send({
+      error: 'UserId and operationId are not passed',
+    });
+  }
+
   const searchParams = req.query;
   const ytUrl = searchParams?.ytUrl as string;
   const extension = searchParams?.extension as string;
   const itag = searchParams?.itag as string;
 
+  if (!ytUrl || !extension || !itag) {
+    res.status(500).send({
+      error: 'ytUrl, extension, itag and operationId are not passed',
+    });
+  }
+
   const io = req.app.get('io');
   const sockets = req.app.get('sockets');
+
+  if (!io || !sockets) {
+    res.status(500).send({
+      error: 'io and sockets are not passed',
+    });
+  }
+
   const socketId = sockets[userId];
   const socketInstance = io.to(socketId);
+
+  if (!socketId || !socketInstance) {
+    res.status(500).send({
+      error: 'socketId and socketInstance are not passed',
+    });
+  }
 
   const validExtension =
     extensionEquivalents[extension as TGetStream['extension']];

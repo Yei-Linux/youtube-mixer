@@ -99,7 +99,7 @@ export const removeFolderProcessed = (path: string) => {
 
     fs.rmdirSync(path);
   } catch (error) {
-    console.log('test', error);
+    console.log('error:', error);
   }
 };
 

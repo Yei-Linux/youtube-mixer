@@ -13,6 +13,11 @@ services:
       - .:/usr/src/app
 
   ms-transcribe:
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
     env_file:
       - ./back/ms-transcribe/.env
     container_name: ms-transcribe
@@ -23,3 +28,4 @@ services:
       - ${MS_TRANSCRIBE_PORT}:${MS_TRANSCRIBE_PORT}
     volumes:
       - .:/usr/src/app
+      - /usr/src/app/back/ms-transcribe/files

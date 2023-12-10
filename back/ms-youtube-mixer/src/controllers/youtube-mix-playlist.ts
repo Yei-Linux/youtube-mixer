@@ -37,15 +37,42 @@ export const getYTMixPlaylist = async (req: Request, res: Response) => {
 export const mixYTPlaylist = async (req: Request, res: Response) => {
   const userId = req.headers?.userid as string;
   const operationId = req.headers?.operationid as string;
+  if (!userId || !operationId) {
+    res.status(500).send({
+      error: 'userId and operationId are required in the headers',
+    });
+  }
 
   const io = req.app.get('io');
   const sockets = req.app.get('sockets');
+  if (!io || !sockets) {
+    res.status(500).send({
+      error: 'Socket was not stablished',
+    });
+  }
+
   const socketId = sockets[userId];
   const socketInstance = io.to(socketId);
+  if (!socketId || !socketInstance) {
+    res.status(500).send({
+      error: 'socketId and socketInstance were not stablished',
+    });
+  }
 
   const body = req.body;
+  if (!body) {
+    res.status(500).send({
+      error: 'Body is empty',
+    });
+  }
+
   const videoIds = body.videoIds;
   const extension = body.extension;
+  if (!videoIds || !extension) {
+    res.status(500).send({
+      error: 'VideoIds and Extension are required',
+    });
+  }
 
   const ytdlUserBasePath = path.join('files', `ytdl_${userId}_${operationId}`);
   const downloadedUserPath = path.join(

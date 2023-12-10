@@ -31,7 +31,6 @@ export const parseYTSourceText = (text: string, ytSearchData: string[]) => {
   try {
     return JSON.parse(jsonParsed);
   } catch (error) {
-    console.log('test', jsonParsed);
     throw new Error('Error parsing json string');
   }
 };
