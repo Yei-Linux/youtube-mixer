@@ -11,6 +11,8 @@ services:
       - ${MS_YT_MIXER_PORT}:${MS_YT_MIXER_PORT}
     volumes:
       - .:/usr/src/app
+      - /usr/src/app/back/ms-youtube-mixer/files
+      - /usr/src/app/back/ms-youtube-mixer/tmp
 
   ms-transcribe:
     deploy:
@@ -29,3 +31,4 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/back/ms-transcribe/files
+      - /usr/src/app/back/ms-transcribe/zip_files

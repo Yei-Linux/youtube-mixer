@@ -5,8 +5,8 @@
     "front:dev": "cd front && npm run dev",
     "back:mixer:dev": "cd back/ms-youtube-mixer && npm run dev",
     "back:transcribe:dev": "cd back/ms-transcribe && python3 ./app/main.py",
-    "back:transcribe:reqs": "cd back/ms-transcribe && pip3 freeze > requirements.txt",
-    "docker:compose-up": "MS_YT_MIXER_PORT=3001 MS_TRANSCRIBE_PORT=8081 COMPOSE_HTTP_TIMEOUT=200 docker-compose up -d",
+    "back:transcribe:reqs": "cd back/ms-transcribe && pigar generate",
+    "docker:compose-up": "MS_YT_MIXER_PORT=3001 MS_TRANSCRIBE_PORT=8081 COMPOSE_HTTP_TIMEOUT=200 docker-compose up --build -d",
     "docker:compose-logs": "MS_YT_MIXER_PORT=3001 MS_TRANSCRIBE_PORT=8081 COMPOSE_HTTP_TIMEOUT=200 docker-compose logs"
   },
   "repository": {

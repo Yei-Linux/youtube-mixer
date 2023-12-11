@@ -8,8 +8,10 @@ export const useSocket = () => {
   const setSocket = useYtVideoStore((store) => store.setSocket);
 
   useEffect(() => {
+    if (!BASE_PATH_EXPRESS) return;
+
     const socket = io(BASE_PATH_EXPRESS);
     socket.emit('connectInit', userId);
     setSocket(socket);
-  }, []);
+  }, [BASE_PATH_EXPRESS]);
 };

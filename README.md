@@ -22,3 +22,12 @@
   npm run front:dev
   npm run docker:compose-up
 ```
+
+# Possible issues
+
+- In case you have docker size issues in your device you can run this following commands to see the memory details and clear it:
+
+```console
+  docker system df -v
+  docker builder prune -a
+```
