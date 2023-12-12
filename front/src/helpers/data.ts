@@ -1,9 +1,8 @@
 import { TExtension, TFormatsGrouped } from '../types/conversion';
 
-export const BASE_PATH_EXPRESS =
-  process.env['MS_YT_MIXER'] ?? 'http://localhost:3001';
+export const BASE_PATH_EXPRESS = process.env['NEXT_PUBLIC_MS_YT_MIXER'];
 export const BASE_PATH_MS_TRANSCRIPT =
-  (process.env['MS_TRANSCRIBE'] ?? 'http://localhost:8081') + '/api';
+  process.env['NEXT_PUBLIC_MS_TRANSCRIBE'] + '/api';
 
 export const audioEquivalents = {
   AUDIO_QUALITY_LOW: 'Quality Low',

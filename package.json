@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "front:dev": "cd front && npm run dev",
+    "front:build": "cd front && npm run build",
+    "front:start": "cd front && npm run start",
     "back:mixer:dev": "cd back/ms-youtube-mixer && npm run dev",
     "back:transcribe:dev": "cd back/ms-transcribe && python3 ./app/main.py",
     "back:transcribe:reqs": "cd back/ms-transcribe && pigar generate",
