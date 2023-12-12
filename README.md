@@ -31,3 +31,22 @@
   docker system df -v
   docker builder prune -a
 ```
+
+# Deploy to ECS aws
+
+- Setup ecs-cli and gnupg
+
+```console
+  sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-darwin-amd64-latest
+  brew install gnupg
+  curl -O https://gist.githubusercontent.com/raphaelmansuy/5aab3c9e6c03e532e9dcf6c97c78b4ff/raw/f39b4df58833f09eb381700a6a854b1adfea482e/ecs-cli-signature-key.key
+  gpg --import ./ecs-cli-signature-key.key
+  sudo chmod +x /usr/local/bin/ecs-cli
+  ecs-cli --version
+```
+
+- Then run configure.sh with following command:
+
+```console
+  npm run aws:configure-ecs
+```

@@ -2,6 +2,7 @@
   "name": "youtube-mixer",
   "version": "1.0.0",
   "scripts": {
+    "aws:configure-ecs": "sh ./scripts/configure.sh",
     "front:dev": "cd front && npm run dev",
     "front:build": "cd front && npm run build",
     "front:start": "cd front && npm run start",
