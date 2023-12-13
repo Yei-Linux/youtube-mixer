@@ -32,7 +32,7 @@
   docker builder prune -a
 ```
 
-# Deploy to ECS aws
+# Create our ECS aws infra
 
 - Setup ecs-cli and gnupg
 
@@ -49,4 +49,42 @@
 
 ```console
   npm run aws:configure-ecs
+```
+
+- Then run create key pairs and create the cluster with following command:
+
+```console
+  npm run aws:create-key
+  npm run aws:create-cluster
+```
+
+- This command create:
+  - A new public VPC
+  - An internet gateway
+  - The routing tables
+  - 2 public subnets in 2 availability zones
+  - 1 security group
+  - 1 autoscaling group
+  - 2 ec2 instances
+  - 1 ecs cluster
+
+# Generate and push our docker images to ECR
+
+- Setup ecs-cli and gnupg
+```console
+  npm run aws:deploy-ecr
+```
+
+# Deploy our docker compose to ECS aws infra
+
+- Then deploy our containers with docker-compose.yml with following command:
+
+```console
+  npm run aws:deploy-ecs
+```
+
+# Connect EC2
+
+```console
+  ssh -i "~/.ssh/youtube-mixer-cluster.pem" ec2-user@ec2-174-129-163-20.compute-1.amazonaws.com
 ```

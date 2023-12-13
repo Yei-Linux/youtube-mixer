@@ -2,6 +2,10 @@
   "name": "youtube-mixer",
   "version": "1.0.0",
   "scripts": {
+    "aws:deploy-ecr": "sh ./scripts/deploy-images-to-ecr.sh",
+    "aws:deploy-ecs": "sh ./scripts/deploy-compose-containers.sh",
+    "aws:create-key": "sh ./scripts/create-key-pair.sh",
+    "aws:create-cluster": "sh ./scripts/create-cluster.sh",
     "aws:configure-ecs": "sh ./scripts/configure.sh",
     "front:dev": "cd front && npm run dev",
     "front:build": "cd front && npm run build",
@@ -9,7 +13,9 @@
     "back:mixer:dev": "cd back/ms-youtube-mixer && npm run dev",
     "back:transcribe:dev": "cd back/ms-transcribe && python3 ./app/main.py",
     "back:transcribe:reqs": "cd back/ms-transcribe && pigar generate",
-    "docker:compose-up": "MS_YT_MIXER_PORT=3001 MS_TRANSCRIBE_PORT=8081 COMPOSE_HTTP_TIMEOUT=200 docker-compose up -d",
+    "docker:build-yt-mixer": "cd back/ms-youtube-mixer && docker build --platform linux/amd64 -t youtube-mixer-ms-youtube-mixer .",
+    "docker:build-transcribe": "cd back/ms-transcribe && docker build --platform linux/amd64 -t youtube-mixer-ms-transcribe .",
+    "docker:compose-up": "MS_YT_MIXER_PORT=3001 MS_TRANSCRIBE_PORT=8081 COMPOSE_HTTP_TIMEOUT=200 docker-compose up --build -d",
     "docker:compose-logs": "MS_YT_MIXER_PORT=3001 MS_TRANSCRIBE_PORT=8081 COMPOSE_HTTP_TIMEOUT=200 docker-compose logs"
   },
   "repository": {

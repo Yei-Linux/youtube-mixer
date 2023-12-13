@@ -1,0 +1,6 @@
+version: 1
+task_definition:
+  ecs_network_mode: bridge
+run_params:
+    network_configuration:
+      assign_public_ip: ENABLED
