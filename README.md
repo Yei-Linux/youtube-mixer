@@ -68,6 +68,15 @@
   - 2 ec2 instances
   - 1 ecs cluster
 
+# Generate our docker builds
+
+- Run this commands:
+```console
+  npm run docker:build-yt-mixer
+  npm run docker:build-transcribe
+```
+
+
 # Generate and push our docker images to ECR
 
 - Setup ecs-cli and gnupg
