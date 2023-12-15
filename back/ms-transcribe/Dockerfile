@@ -2,6 +2,7 @@ FROM python:3.11
 MAINTAINER Jesus Alvan <jesusalvan2010@gmail.com>
 
 WORKDIR /usr/src/app/back/ms-transcribe
+ENV MS_TRANSCRIBE_PORT=8081
 
 COPY ["requirements.txt", "./"]
 COPY ./app ./app

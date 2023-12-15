@@ -1,6 +1,7 @@
-version: '3'
+version: '2'
 services:
   ms-youtube-mixer:
+    platform: linux/amd64
     image: 'public.ecr.aws/u1h6l3v5/ms-youtube-mixer:latest'
     env_file:
       - ./back/ms-youtube-mixer/.env
@@ -12,6 +13,7 @@ services:
       - /usr/src/app/back/ms-youtube-mixer/tmp
 
   ms-transcribe:
+    platform: linux/amd64
     image: 'public.ecr.aws/u1h6l3v5/ms-transcribe:latest'
     env_file:
       - ./back/ms-transcribe/.env

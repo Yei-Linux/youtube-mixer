@@ -8,5 +8,5 @@ ecs-cli compose --project-name $PROFILE_NAME \
     --deployment-max-percent 100 --deployment-min-healthy-percent 0 \
     --region $AWS_DEFAULT_REGION --ecs-profile $PROFILE_NAME \
     --cluster-config $PROFILE_NAME --create-log-groups \
-    --timeout 5
+    --timeout 10
     
