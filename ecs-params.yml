@@ -1,4 +1,0 @@
-version: 1
-run_params:
-    network_configuration:
-      assign_public_ip: ENABLED

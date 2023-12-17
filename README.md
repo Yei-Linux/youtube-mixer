@@ -32,68 +32,65 @@
   docker builder prune -a
 ```
 
-# Create our ECS aws infra
-
-- Setup ecs-cli and gnupg
-
-```console
-  sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-darwin-amd64-latest
-  brew install gnupg
-  curl -O https://gist.githubusercontent.com/raphaelmansuy/5aab3c9e6c03e532e9dcf6c97c78b4ff/raw/f39b4df58833f09eb381700a6a854b1adfea482e/ecs-cli-signature-key.key
-  gpg --import ./ecs-cli-signature-key.key
-  sudo chmod +x /usr/local/bin/ecs-cli
-  ecs-cli --version
-```
-
-- Then run configure.sh with following command:
-
-```console
-  npm run aws:configure-ecs
-```
-
-- Then run create key pairs and create the cluster with following command:
-
-```console
-  npm run aws:create-key
-  npm run aws:create-cluster
-```
-
-- This command create:
-  - A new public VPC
-  - An internet gateway
-  - The routing tables
-  - 2 public subnets in 2 availability zones
-  - 1 security group
-  - 1 autoscaling group
-  - 2 ec2 instances
-  - 1 ecs cluster
-
 # Generate our docker builds
 
-- Run this commands:
+- Run these commands:
+
 ```console
   npm run docker:build-yt-mixer
   npm run docker:build-transcribe
 ```
 
-
 # Generate and push our docker images to ECR
 
 - Setup ecs-cli and gnupg
+
 ```console
   npm run aws:deploy-ecr
 ```
 
-# Deploy our docker compose to ECS aws infra
-
-- Then deploy our containers with docker-compose.yml with following command:
+- In case for just login run:
 
 ```console
-  npm run aws:deploy-ecs
+aws ecr-public get-login-password --profile jesus --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 ```
 
-# Connect EC2
+# Create EC2 Instance
+
+- Run these commands:
 
 ```console
-  ssh -i "~/.ssh/youtube-mixer-cluster.pem" ec2-user@ec2-174-129-163-20.compute-1.amazonaws.com
+  npm run aws:create-ec2-instance
+```
+
+# Connect EC2 and setup
+
+- Connect to ec2 instance , download gists files and run the shell files to setup:
+
+```console
+  ssh -i "~/.ssh/youtube-mixer-cluster.pem" ubuntu@ec2-54-227-244-224.compute-1.amazonaws.com
+
+  curl -O https://gist.githubusercontent.com/Yei-Linux/0c7e5e044563af265086786b7cb5553a/raw/faa7f71c5d9736db662fdfa2d8394a96df353471/ec2-setup.sh
+  curl -O https://gist.githubusercontent.com/Yei-Linux/89bedf9e27c6cbbfee2311892b8fb49a/raw/89c3bb535de10eeffdefadeb1c8e00320d395014/ec2-docker-install.sh
+  curl -O https://gist.githubusercontent.com/Yei-Linux/21f3b61fec844ddb9c926c093bdd0231/raw/ad88bbf65f28569099e9e81f1225091ee80ffe33/ec2-caprover-install.sh
+  curl -O https://gist.githubusercontent.com/Yei-Linux/1831bb0742755d26977c4723eea579bc/raw/491c048f689490df13cc0feec2a8eea57599d145/ec2-remove-captain.sh
+```
+
+# Caprover NGINX Config
+
+- Setup:
+
+```console
+
+        location / {
+
+            proxy_read_timeout 120s; #### <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    <%
+    if (s.httpBasicAuthPath) {
+    %>
+            auth_basic           "Restricted Access";
+            auth_basic_user_file <%-s.httpBasicAuthPath%>; 
+    <%
+    }
+    %>
 ```

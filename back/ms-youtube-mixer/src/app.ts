@@ -8,6 +8,8 @@ import {
   getYTMixPlaylist,
   mixYTPlaylist,
 } from './controllers/youtube-mix-playlist';
+import { createFoldersInCaseNotExistsOnPath } from './helpers/data';
+import path from 'path';
 
 const app: Application = express();
 const server = http.createServer(app);
@@ -49,5 +51,7 @@ io.on('connection', (socket: any) => {
 app.set('io', io);
 
 server.listen(PORT, () => {
+  const filespath = path.join('files');
+  createFoldersInCaseNotExistsOnPath(filespath);
   console.log('Application running up on ', PORT);
 });

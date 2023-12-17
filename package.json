@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "aws:deploy-ecr": "sh ./scripts/deploy-images-to-ecr.sh",
-    "aws:deploy-ecs": "sh ./scripts/deploy-compose-containers.sh",
+    "aws:create-ec2-instance": "sh ./scripts/create-ec2-instance.sh",
     "aws:create-key": "sh ./scripts/create-key-pair.sh",
-    "aws:create-cluster": "sh ./scripts/create-cluster.sh",
-    "aws:configure-ecs": "sh ./scripts/configure.sh",
     "front:dev": "cd front && npm run dev",
     "front:build": "cd front && npm run build",
     "front:start": "cd front && npm run start",

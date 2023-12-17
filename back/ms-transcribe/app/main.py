@@ -94,4 +94,10 @@ async def video_editor(request_str = Form(...) ,file: UploadFile = File(...)):
     return FileResponse(file_name,background=BackgroundTask(remove_file, file_name))
 
 if __name__ == '__main__':
+    if not os.path.exists('files'):
+        os.makedirs('files')
+
+    if not os.path.exists('zip_files'):
+        os.makedirs('zip_files')
+    
     uvicorn.run("main:app",reload=False, port= int(os.environ['MS_TRANSCRIBE_PORT']), host= "0.0.0.0")
