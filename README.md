@@ -94,3 +94,8 @@ aws ecr-public get-login-password --profile jesus --region us-east-1 | docker lo
     }
     %>
 ```
+
+
+# Caprover
+
+- Password: mixer123
